@@ -8,28 +8,24 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
   <style>
     :root{
-      --bg1:#0b1020;
-      --bg2:#0e1330;
-      --txt:#dfe7ff;
-      --muted:#9bb0ff;
-      --primary:#5e8bff;
-      --secondary:#e445ff;
-      --accent:#2ef2ff;
-      --ok:#53f28f;
-      --warn:#ffcf4a;
-      --err:#ff5e6b;
-      --panel:#101936cc;
-      --neon: 0 0 18px rgba(94,139,255,.7), 0 0 42px rgba(244,67,255,.35), 0 0 72px rgba(46,242,255,.3);
+      --bg1:#0b1020; --bg2:#0e1330; --txt:#dfe7ff; --muted:#9bb0ff;
+      --primary:#5e8bff; --secondary:#e445ff; --accent:#2ef2ff;
+      --ok:#53f28f; --warn:#ffcf4a; --err:#ff5e6b;
+      --panel:#101936cc; --neon: 0 0 18px rgba(94,139,255,.7), 0 0 42px rgba(244,67,255,.35), 0 0 72px rgba(46,242,255,.3);
       --radius:16px;
     }
     *{box-sizing:border-box}
-    html,body{margin:0;padding:0;background:radial-gradient(1200px 700px at 80% 0%, #2b0c3a 0%, transparent 50%), radial-gradient(900px 600px at 0% 100%, #0b2b4a 0%, transparent 45%), linear-gradient(120deg, var(--bg1), var(--bg2)); color:var(--txt); font-family:Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif}
+    html,body{
+      margin:0;padding:0;
+      background:radial-gradient(1200px 700px at 80% 0%, #2b0c3a 0%, transparent 50%), radial-gradient(900px 600px at 0% 100%, #0b2b4a 0%, transparent 45%), linear-gradient(120deg, var(--bg1), var(--bg2));
+      color:var(--txt); font-family:Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif
+    }
     a{color:var(--accent); text-decoration:none}
-    h1{font-size:42px; line-height:1.1; margin:12px 0 8px}
-    h2{font-size:22px; margin:0 0 10px}
+    h1{font-size:38px; line-height:1.1; margin:12px 0 8px}
+    h2{font-size:20px; margin:0 0 10px}
     p{color:var(--muted); margin:6px 0 12px}
-    .wrap{max-width:1200px; margin:0 auto; padding:28px 18px 40px}
-    .header{display:flex;align-items:center;justify-content:space-between;gap:12px; margin-bottom:28px}
+    .wrap{max-width:1300px; margin:0 auto; padding:28px 18px 40px}
+    .header{display:flex;align-items:center;justify-content:space-between;gap:12px; margin-bottom:18px}
     .brand{display:flex;align-items:center;gap:12px}
     .logo{width:40px;height:40px;border-radius:12px;background:linear-gradient(135deg, #5e8bff, #e445ff); box-shadow:var(--neon)}
     .brand b{font-size:20px; letter-spacing:.5px}
@@ -44,7 +40,8 @@
     .btn.secondary{background:linear-gradient(135deg, #2ef2ff, #5e8bff)}
     .btn.ghost{background:transparent; color:var(--txt); border:1px solid #2a385f; box-shadow:none}
     .btn.ghost:hover{box-shadow:0 0 22px rgba(94,139,255,.35)}
-    .grid{display:grid; grid-template-columns:1.4fr 1fr; gap:18px}
+    .grid{display:grid; grid-template-columns:0.9fr 1.6fr; gap:18px}
+    @media (max-width: 980px){ .grid{grid-template-columns:1fr; } }
     .panel{
       background:linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,0)) , rgba(16,25,54,.6);
       border:1px solid rgba(135,157,255,.18);
@@ -73,19 +70,17 @@
     .err{color:var(--err)}
     .ok{color:var(--ok)}
     .preview{display:grid; gap:10px}
-    canvas{width:100%; background:transparent; border-radius:12px; border:1px solid #253159}
-    .gif-out{display:flex; align-items:center; justify-content:space-between; gap:10px}
-    .codebox{
-      width:100%; min-height:120px; border-radius:12px; background:#0c1430; border:1px solid #26345f; padding:12px; color:#cfe0ff; font-family:ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace; overflow:auto; white-space:pre-wrap
-    }
+    canvas{width:100%; background:transparent; border-radius:12px; border:1px solid #253159; min-height:420px}
     .neon-hover:hover{box-shadow:var(--neon)}
     .hr{height:1px; background:linear-gradient(90deg, transparent, rgba(135,157,255,.36), transparent); margin:8px 0}
     .footer{opacity:.7; font-size:12px; text-align:center; margin-top:18px}
     .switch{display:inline-flex;align-items:center;gap:8px}
     .switch input{accent-color:#5e8bff}
-    .kbd{background:#0f1a3c; border:1px solid #22315b; color:#cfe0ff; border-radius:6px; padding:2px 6px; font-size:12px}
     .small{font-size:12px}
     .flex{display:flex; gap:10px; align-items:center}
+    .muted{color:#9bb0ff}
+    .row.right{justify-content:flex-end}
+    .sub{font-size:12px; opacity:.85}
   </style>
 </head>
 <body>
@@ -95,36 +90,37 @@
         <div class="logo"></div>
         <div>
           <b>Neon GIF Constructor</b><br>
-          <span class="small" style="color:#9bb0ff">Загрузка • Эффекты • Прозрачность • Сжатие • Код для Genially</span>
+          <span class="small" style="color:#9bb0ff">Загрузка • Оживление героя • Прозрачность • Сжатие • Автоскачивание</span>
         </div>
       </div>
       <div class="cta">
         <button class="btn ghost" id="btnSample">Загрузить демо</button>
-        <a class="btn" href="https://github.com" target="_blank" rel="noreferrer">GitHub</a>
       </div>
     </div>
 
     <div class="grid">
-      <!-- Left: Controls -->
+      <!-- Left: Controls (smaller) -->
       <div class="panel">
-        <span class="badge">Constructor</span>
-        <h1>Соберите анимированную GIF</h1>
-        <p>Загрузите изображение, настройте эффекты и получите код для вставки в Genially.</p>
+        <span class="badge">Настройки</span>
+        <h1>Оживите героя</h1>
+        <p>Загрузите изображение, выберите тип оживления (дыхание, бег, выстрел) и сгенерируйте GIF. Файл скачается автоматически.</p>
 
         <div class="section">
-          <h2>1) Источник изображения</h2>
+          <h2>1) Источник</h2>
           <div class="row">
             <div class="file" style="flex:1">
-              <div class="fake neon-hover"><span>Перетащите файл сюда или нажмите, чтобы выбрать</span></div>
+              <div class="fake neon-hover"><span>Перетащите файл или нажмите, чтобы выбрать</span></div>
               <input id="fileInput" type="file" accept="image/*">
             </div>
+          </div>
+          <div class="row">
             <div style="flex:1; min-width:260px">
-              <label for="urlInput">URL картинки (CORS нужен для обработки)</label>
+              <label for="urlInput">URL картинки (нужен CORS)</label>
               <input id="urlInput" type="url" placeholder="https://example.com/image.png">
             </div>
             <button class="btn secondary" id="btnLoadUrl" title="Загрузить по ссылке">Загрузить</button>
           </div>
-          <div class="note">Поддержка: PNG/JPG/WebP/SVG(растрируется). Для URL необходимы заголовки CORS, иначе канва будет «замусорена» и экспорт недоступен.</div>
+          <div class="note">Поддержка: PNG/JPG/WebP/SVG(растрируется). Для URL требуются корректные CORS-заголовки.</div>
         </div>
 
         <div class="hr"></div>
@@ -144,7 +140,7 @@
           </div>
           <div class="row">
             <div style="flex:1">
-              <label>Цвет для хромакея</label>
+              <label>Цвет хромакея</label>
               <input id="chromaColor" type="text" value="#00ff00">
             </div>
             <div style="flex:1">
@@ -156,85 +152,77 @@
               <input id="softness" type="range" min="0" max="80" value="12">
             </div>
           </div>
-          <div class="note">GIF поддерживает 1-битную прозрачность по индексу цвета. Для лучшего результата используйте однотонный фон на исходном изображении.</div>
         </div>
 
         <div class="hr"></div>
 
         <div class="section">
-          <h2>3) Эффекты «оживления»</h2>
+          <h2>3) Оживление героя</h2>
           <div class="row">
             <div style="flex:1">
-              <label for="effect">Эффект</label>
+              <label for="effect">Тип</label>
               <select id="effect">
                 <option value="none">Без эффекта</option>
-                <option value="pulse">Пульс (скейл)</option>
-                <option value="pan">Панорамирование</option>
-                <option value="zoom-in">Зум-ин</option>
-                <option value="zoom-out">Зум-аут</option>
-                <option value="rotate">Поворот</option>
-                <option value="glow">Свечение</option>
+                <option value="breath">Дыхание</option>
+                <option value="run">Бег</option>
+                <option value="shoot">Выстрел</option>
               </select>
             </div>
             <div style="flex:1">
-              <label>Сила эффекта: <span id="intVal">0.25</span></label>
-              <input id="intensity" type="range" min="0" max="1" step="0.01" value="0.25">
+              <label>Сила: <span id="intVal">0.30</span></label>
+              <input id="intensity" type="range" min="0" max="1" step="0.01" value="0.30">
             </div>
+          </div>
+
+          <div class="row" id="shootRow" style="display:none">
+            <button class="btn ghost" id="btnPickFlash">Указать точку вспышки</button>
+            <span class="pill" id="flashInfo">Точка: —</span>
+            <div style="flex:1; min-width:140px">
+              <label>Выстрелов за цикл: <span id="shotsVal">1</span></label>
+              <input id="shots" type="range" min="1" max="5" step="1" value="1">
+            </div>
+          </div>
+
+          <div class="row">
             <div style="flex:1">
-              <label>Длительность (сек):</label>
+              <label>Длительность цикла (сек)</label>
               <input id="duration" type="number" min="0.5" step="0.1" value="2.0">
             </div>
             <div style="flex:1">
-              <label>FPS:</label>
+              <label>FPS</label>
               <input id="fps" type="number" min="1" max="60" value="16">
             </div>
+            <div class="switch">
+              <input type="checkbox" id="loop" checked>
+              <label for="loop">Зациклить</label>
+            </div>
           </div>
+          <div class="sub muted">Подсказка: «Дыхание» — мягкая пульсация по Y; «Бег» — подпрыгивание + лёгкое покачивание и линии скорости; «Выстрел» — вспышка в выбранной точке и отдача.</div>
         </div>
 
         <div class="hr"></div>
 
         <div class="section">
-          <h2>4) Размер и качество</h2>
+          <h2>4) Размер и экспорт</h2>
           <div class="row">
             <div style="flex:1">
-              <label>Ширина (px):</label>
-              <input id="outW" type="number" min="16" value="800">
+              <label>Ширина (px)</label>
+              <input id="outW" type="number" min="16" value="900">
             </div>
             <div style="flex:1">
-              <label>Высота (px):</label>
-              <input id="outH" type="number" min="16" value="800">
+              <label>Высота (px)</label>
+              <input id="outH" type="number" min="16" value="600">
             </div>
-            <div style="flex:1">
-              <label>Palette (цветов):</label>
-              <input id="palette" type="number" min="8" max="256" value="128">
-            </div>
-            <div style="flex:1">
-              <label for="dither">Дизеринг</label>
-              <select id="dither">
-                <option value="none">Без</option>
-                <option value="FloydSteinberg">Floyd–Steinberg</option>
-                <option value="FalseFloydSteinberg">False Floyd–Steinberg</option>
-                <option value="Atkinson">Atkinson</option>
-              </select>
-            </div>
-          </div>
-          <div class="row">
             <div class="switch">
               <input type="checkbox" id="lockAspect" checked>
-              <label for="lockAspect">Сохранять пропорции источника</label>
+              <label for="lockAspect">Сохранять пропорции</label>
             </div>
             <div class="switch">
               <input type="checkbox" id="warn8k" checked>
               <label for="warn8k">Предупреждать про 8K</label>
             </div>
-            <span class="pill small">Макс до 7680×4320 (8K). Практически не сочетается с лимитом 5–10 МБ.</span>
           </div>
-        </div>
 
-        <div class="hr"></div>
-
-        <div class="section">
-          <h2>5) Сжатие и экспорт</h2>
           <div class="row">
             <div class="switch">
               <input type="radio" name="target" id="tNone" value="none" checked>
@@ -250,68 +238,40 @@
             </div>
             <div class="switch">
               <input type="checkbox" id="autoCompress" checked>
-              <label for="autoCompress">Авто-сжатие до цели</label>
+              <label for="autoCompress">Автосжатие до цели</label>
             </div>
           </div>
-          <div class="row">
+
+          <div class="row right">
             <button class="btn" id="btnGenerate">Сгенерировать GIF</button>
             <button class="btn ghost" id="btnCancel" disabled>Отмена</button>
+          </div>
+          <div class="row">
             <span id="status" class="note">Готов к работе</span>
+            <span class="pill" id="sizeInfo">Размер: —</span>
           </div>
         </div>
       </div>
 
-      <!-- Right: Preview/Output -->
+      <!-- Right: Preview (larger) -->
       <div class="panel">
-        <span class="badge">Preview & Code</span>
-        <h2>Предпросмотр</h2>
+        <span class="badge">Предпросмотр</span>
         <div class="preview">
-          <canvas id="stage" width="800" height="800"></canvas>
-          <div class="gif-out">
-            <div class="flex">
-              <a id="dlGif" class="btn ghost" download="result.gif">Скачать GIF</a>
-              <span class="pill" id="sizeInfo">Размер: —</span>
-            </div>
-            <div class="switch">
-              <input type="checkbox" id="loop" checked>
-              <label for="loop">Зациклить</label>
-            </div>
-          </div>
-        </div>
-
-        <div class="hr"></div>
-
-        <div class="section">
-          <h2>Код для Genially</h2>
-          <div class="row">
-            <div style="flex:2">
-              <label>Публичный URL GIF (опционально — если хостите файл у себя)</label>
-              <input id="publicUrl" type="url" placeholder="https://ваш-домен/path/to/result.gif">
-            </div>
-            <button class="btn secondary" id="btnBuildCode">Сформировать код</button>
-          </div>
-          <div class="row">
-            <div class="codebox" id="codeBox" spellcheck="false"></div>
-          </div>
-          <div class="row">
-            <button class="btn" id="btnCopy">Скопировать код</button>
-            <span class="note">Вставьте этот код в виджет «Вставить код» в Genially.</span>
-          </div>
+          <canvas id="stage" width="900" height="600"></canvas>
         </div>
       </div>
     </div>
 
     <div class="footer">
-      Советы: чем меньше размеры и FPS, тем меньше размер файла. Используйте однотонный фон для лучшего хромакея.
+      Совет: для лучшего результата используйте однотонный фон (для хромакея), и помните — чем меньше размеры и FPS, тем меньше итоговый размер GIF.
     </div>
   </div>
 
-  <!-- GIF.js CDN -->
+  <!-- GIF.js -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gif.js/0.2.0/gif.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/gif.js/0.2.0/gif.worker.js"></script>
 
   <script>
-    // --------- State ---------
+    // --------- Elements & State ---------
     const els = {
       file: document.getElementById('fileInput'),
       url: document.getElementById('urlInput'),
@@ -333,8 +293,6 @@
       tolVal: document.getElementById('tolVal'),
       softness: document.getElementById('softness'),
       softVal: document.getElementById('softVal'),
-      palette: document.getElementById('palette'),
-      dither: document.getElementById('dither'),
       targetNone: document.getElementById('tNone'),
       target10: document.getElementById('t10'),
       target5: document.getElementById('t5'),
@@ -342,14 +300,14 @@
       btnGenerate: document.getElementById('btnGenerate'),
       btnCancel: document.getElementById('btnCancel'),
       status: document.getElementById('status'),
-      dlGif: document.getElementById('dlGif'),
       sizeInfo: document.getElementById('sizeInfo'),
-      btnBuildCode: document.getElementById('btnBuildCode'),
-      publicUrl: document.getElementById('publicUrl'),
-      codeBox: document.getElementById('codeBox'),
-      btnCopy: document.getElementById('btnCopy'),
       loop: document.getElementById('loop'),
       btnSample: document.getElementById('btnSample'),
+      shootRow: document.getElementById('shootRow'),
+      btnPickFlash: document.getElementById('btnPickFlash'),
+      flashInfo: document.getElementById('flashInfo'),
+      shots: document.getElementById('shots'),
+      shotsVal: document.getElementById('shotsVal'),
     };
 
     const ctx = els.stage.getContext('2d');
@@ -357,7 +315,9 @@
     let srcLoaded = false;
     let aspect = 1;
     let cancelFlag = false;
-    const MAGENTA = {r:255,g:0,b:255}; // для прозрачности индекса
+    const MAGENTA = {r:255,g:0,b:255}; // цвет для прозрачного индекса GIF
+    let pickFlashMode = false;
+    let flashPoint = null; // {x,y} в координатах канвы
 
     // --------- Helpers ---------
     function hexToRgb(hex){
@@ -383,14 +343,13 @@
       els.status.textContent = msg;
     }
     function setSizeInfo(blob){
-      if(!blob){els.sizeInfo.textContent='Размер: —'; return;}
+      if(!blob){els.sizeInfo.textContent='Размер: —'; els.sizeInfo.className='pill'; return;}
       els.sizeInfo.textContent='Размер: ' + humanSize(blob.size);
       if(blob.size > 10*1024*1024) els.sizeInfo.className='pill err';
       else if(blob.size > 5*1024*1024) els.sizeInfo.className='pill warn';
       else els.sizeInfo.className='pill ok';
     }
     function withCORS(url){
-      // Предупреждение: если сервер не отдает CORS, канва будет «tainted»
       const img = new Image();
       img.crossOrigin = 'anonymous';
       img.src = url;
@@ -407,6 +366,19 @@
         alert('Внимание: 8K GIF крайне тяжело генерировать в браузере и почти невозможно уложить в 5–10 МБ. Рекомендуется уменьшить размер или FPS.');
       }
     }
+    function autoDownload(blob, name='result.gif'){
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = name;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      // покажем размер
+      setSizeInfo(blob);
+      // освободим позже
+      setTimeout(()=>URL.revokeObjectURL(url), 60000);
+    }
 
     // --------- Loaders ---------
     els.file.addEventListener('change', async (e)=>{
@@ -421,7 +393,6 @@
       await loadSource(els.url.value, true);
     });
     els.btnSample.addEventListener('click', async ()=>{
-      // Небольшая публичная демо-картинка с CORS
       await loadSource('https://images.unsplash.com/photo-1542751371-adc38448a05e?q=80&w=1200&auto=format&fit=crop', true);
     });
 
@@ -451,32 +422,197 @@
     els.intensity.addEventListener('input', ()=> els.intVal.textContent = els.intensity.value);
     els.tolerance.addEventListener('input', ()=> els.tolVal.textContent = els.tolerance.value);
     els.softness.addEventListener('input', ()=> els.softVal.textContent = els.softness.value);
-    els.outW.addEventListener('input', ()=>{
-      if(els.lockAspect.checked) fitOutputToAspect();
-    });
+    els.outW.addEventListener('input', ()=>{ if(els.lockAspect.checked) fitOutputToAspect(); });
     els.outH.addEventListener('input', ()=>{
       if(els.lockAspect.checked){
-        // если вручную меняют высоту — подстроим ширину
         const h = parseInt(els.outH.value||0,10);
         els.outW.value = Math.round(h * aspect);
       }
     });
+    els.effect.addEventListener('change', ()=>{
+      const eff = els.effect.value;
+      els.shootRow.style.display = eff==='shoot' ? '' : 'none';
+    });
+    els.shots.addEventListener('input', ()=> els.shotsVal.textContent = els.shots.value);
 
-    // Пипетка по предпросмотру для выбора цвета хромакея
+    // Режим выбора точки вспышки
+    els.btnPickFlash.addEventListener('click', ()=>{
+      pickFlashMode = !pickFlashMode;
+      els.btnPickFlash.textContent = pickFlashMode ? 'Нажмите по предпросмотру…' : 'Указать точку вспышки';
+      els.btnPickFlash.classList.toggle('secondary', pickFlashMode);
+    });
+
+    // Клик по канве: пипетка или выбор точки вспышки
     els.stage.addEventListener('click', (e)=>{
-      if(!els.enableChroma.checked) return;
       const rect = els.stage.getBoundingClientRect();
       const x = Math.floor((e.clientX - rect.left) * (els.stage.width/rect.width));
       const y = Math.floor((e.clientY - rect.top) * (els.stage.height/rect.height));
-      const p = ctx.getImageData(x,y,1,1).data;
-      const hex = '#'+[p[0],p[1],p[2]].map(v=>v.toString(16).padStart(2,'0')).join('');
-      els.chromaColor.value = hex;
-      drawPreview(0);
+
+      if(pickFlashMode && els.effect.value==='shoot'){
+        flashPoint = {x,y};
+        els.flashInfo.textContent = `Точка: ${x}, ${y}`;
+        pickFlashMode = false;
+        els.btnPickFlash.textContent = 'Указать точку вспышки';
+        els.btnPickFlash.classList.remove('secondary');
+        drawPreview(0);
+        return;
+      }
+      if(els.enableChroma.checked){
+        const p = ctx.getImageData(x,y,1,1).data;
+        const hex = '#'+[p[0],p[1],p[2]].map(v=>v.toString(16).padStart(2,'0')).join('');
+        els.chromaColor.value = hex;
+        drawPreview(0);
+      }
     });
 
-    // --------- Preview drawing ---------
-    function drawPreview(t){
-      if(!srcLoaded) {
+    // --------- Drawing ---------
+    function applyChromaOnCanvas(ctx, W, H, key, tol, soft){
+      const img = ctx.getImageData(0,0,W,H);
+      const d = img.data;
+      for(let i=0;i<d.length;i+=4){
+        const r=d[i], g=d[i+1], b=d[i+2];
+        const dist = distance({r,g,b}, key);
+        if(dist < tol){
+          d[i+3]=0;
+        }else if(dist < tol+soft){
+          const t = (dist - tol) / Math.max(1, soft);
+          d[i+3] = Math.round(d[i+3] * clamp(t,0,1));
+        }
+      }
+      ctx.putImageData(img,0,0);
+    }
+
+    function drawHeroFrame(t, ctx, W, H, isPreview=false){
+      // t: 0..1 фаза цикла
+      // Фон
+      if(els.transparentBg.checked){
+        ctx.fillStyle = 'rgb(255,0,255)'; // магента
+        ctx.fillRect(0,0,W,H);
+      }else{
+        ctx.clearRect(0,0,W,H);
+      }
+
+      const eff = els.effect.value;
+      const k = parseFloat(els.intensity.value||0.3);
+
+      const iw = srcImage.width, ih = srcImage.height;
+      const baseS = Math.min(W/iw, H/ih);
+      let sx = baseS, sy = baseS, dx=0, dy=0, rot=0;
+
+      // Эффекты оживления
+      if(eff==='breath'){
+        const breath = Math.sin(t*2*Math.PI); // -1..1
+        sy *= (1 + 0.06*k*breath);
+        sx *= (1 + 0.02*k*breath);
+        dy += (H*0.01*k)*breath;
+      }else if(eff==='run'){
+        const bob = Math.sin(t*2*Math.PI); // подпрыгивание
+        dy += (H*0.03*k)*(-Math.abs(bob)); // вниз на фазе приземления
+        dx += (W*0.01*k)*Math.sin(t*4*Math.PI); // лёгкое покачивание
+        rot += (Math.PI/180) * (2*k) * Math.sin(t*2*Math.PI + Math.PI/4);
+      }else if(eff==='shoot'){
+        // одна или несколько вспышек за цикл
+        const n = parseInt(els.shots.value||1,10);
+        let shotActive = false;
+        let local = 0;
+        for(let i=0;i<n;i++){
+          const center = (i+0.5)/n; // равномерно по циклу
+          const w = 0.06; // ширина окна вспышки (в долях цикла)
+          const dt = Math.abs(t-center);
+          if(dt < w){
+            shotActive = true;
+            local = 1 - dt/w; // 0..1
+            break;
+          }
+        }
+        if(shotActive){
+          // отдача
+          const fp = flashPoint || {x:W*0.75, y:H*0.45};
+          const cx = W/2, cy = H/2;
+          const vx = cx - fp.x, vy = cy - fp.y; // направление отдачи
+          const len = Math.max(1, Math.hypot(vx,vy));
+          dx += (vx/len) * (W*0.01*k) * local;
+          dy += (vy/len) * (H*0.01*k) * local;
+          rot += (Math.PI/180) * (2.5*k) * (Math.random()*2-1) * local; // лёгкий тряск
+        }
+      }
+
+      const dw = iw*sx, dh = ih*sy;
+      ctx.save();
+      ctx.translate(W/2 + dx, H/2 + dy);
+      ctx.rotate(rot);
+      ctx.drawImage(srcImage, -dw/2, -dh/2, dw, dh);
+      ctx.restore();
+
+      // Линии скорости для «Бега»
+      if(eff==='run'){
+        const lines = 6;
+        ctx.save();
+        ctx.globalAlpha = 0.18 * (0.6+0.4*Math.sin(t*2*Math.PI));
+        ctx.fillStyle = 'rgba(200,220,255,0.8)';
+        for(let i=0;i<lines;i++){
+          const yy = (H*(i+1)/(lines+1)) + Math.sin(t*2*Math.PI + i)*8;
+          const len = W*0.18;
+          const off = (t*W*0.3 + i*40) % (W*0.3);
+          ctx.fillRect(W - off - len, yy, len, 2);
+        }
+        ctx.restore();
+      }
+
+      // Вспышка для «Выстрела»
+      if(eff==='shoot'){
+        const n = parseInt(els.shots.value||1,10);
+        for(let i=0;i<n;i++){
+          const center = (i+0.5)/n;
+          const w = 0.06;
+          const dt = Math.abs(t-center);
+          if(dt < w){
+            const local = 1 - dt/w; // 0..1
+            const fp = flashPoint || {x:W*0.75, y:H*0.45};
+            const r = Math.max(W,H) * (0.12 + 0.20*local) * (0.5 + k);
+            const g = ctx.createRadialGradient(fp.x, fp.y, 0, fp.x, fp.y, r);
+            g.addColorStop(0, 'rgba(255,255,210,'+(0.9*local)+')');
+            g.addColorStop(0.35, 'rgba(255,230,120,'+(0.6*local)+')');
+            g.addColorStop(1, 'rgba(255,200,0,0)');
+            ctx.save();
+            ctx.globalCompositeOperation = 'screen';
+            ctx.fillStyle = g;
+            ctx.beginPath(); ctx.arc(fp.x, fp.y, r, 0, Math.PI*2); ctx.fill();
+            ctx.restore();
+            break;
+          }
+        }
+      }
+
+      // Хромакей
+      if(els.enableChroma.checked){
+        applyChromaOnCanvas(ctx, W, H, hexToRgb(els.chromaColor.value), parseInt(els.tolerance.value,10), parseInt(els.softness.value,10));
+        if(els.transparentBg.checked){
+          // Обеспечим цвет фона магентой под прозрачными пикселями (для индекса прозрачности GIF)
+          const img = ctx.getImageData(0,0,W,H);
+          const d = img.data;
+          for(let i=0;i<d.length;i+=4){
+            if(d[i+3]===0){ d[i]=MAGENTA.r; d[i+1]=MAGENTA.g; d[i+2]=MAGENTA.b; d[i+3]=255; }
+          }
+          ctx.putImageData(img,0,0);
+        }
+      }
+
+      // Крестообразный маркер точки вспышки (только предпросмотр)
+      if(isPreview && els.effect.value==='shoot' && flashPoint){
+        ctx.save();
+        ctx.strokeStyle = 'rgba(46,242,255,0.9)';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(flashPoint.x-8, flashPoint.y); ctx.lineTo(flashPoint.x+8, flashPoint.y);
+        ctx.moveTo(flashPoint.x, flashPoint.y-8); ctx.lineTo(flashPoint.x, flashPoint.y+8);
+        ctx.stroke();
+        ctx.restore();
+      }
+    }
+
+    function drawPreview(tNorm){
+      if(!srcLoaded){
         ctx.clearRect(0,0,els.stage.width, els.stage.height);
         return;
       }
@@ -485,83 +621,10 @@
       if(els.stage.width!==W || els.stage.height!==H){
         els.stage.width = W; els.stage.height = H;
       }
-
-      // Фон
-      if(els.transparentBg.checked){
-        // зальем магентой, а при экспорте установим прозрачный индекс = магента
-        ctx.save();
-        ctx.fillStyle = 'rgb(255,0,255)';
-        ctx.fillRect(0,0,W,H);
-        ctx.restore();
-      }else{
-        ctx.clearRect(0,0,W,H);
-      }
-
-      // Эффект
-      const eff = els.effect.value;
-      const k = parseFloat(els.intensity.value);
-      let scale = 1, dx=0, dy=0, rot=0;
-      const loop = (Math.sin(t*2*Math.PI)+1)/2; // 0..1
-
-      switch(eff){
-        case 'pulse': scale = lerp(1-k, 1+k, loop); break;
-        case 'pan': dx = Math.sin(t*2*Math.PI) * (W*0.05*k); dy = Math.cos(t*2*Math.PI) * (H*0.05*k); break;
-        case 'zoom-in': scale = lerp(1, 1+0.4*k, loop); break;
-        case 'zoom-out': scale = lerp(1+0.4*k, 1, loop); break;
-        case 'rotate': rot = (loop-0.5) * (Math.PI/12) * (k*2); break; // до ~15°
-        case 'glow': scale = 1; break;
-        default: break;
-      }
-
-      const iw = srcImage.width;
-      const ih = srcImage.height;
-      const s = Math.min(W/iw, H/ih) * scale;
-      const dw = iw*s;
-      const dh = ih*s;
-      const cx = W/2 + dx;
-      const cy = H/2 + dy;
-
-      ctx.save();
-      ctx.translate(cx, cy);
-      ctx.rotate(rot);
-
-      if(eff==='glow'){
-        // Простое свечение: размытие копии позади
-        ctx.filter = 'blur('+(8+20*parseFloat(els.intensity.value))+'px)';
-        ctx.globalAlpha = 0.9;
-        ctx.drawImage(srcImage, -dw/2, -dh/2, dw, dh);
-        ctx.filter = 'none';
-        ctx.globalAlpha = 1.0;
-      }
-
-      ctx.drawImage(srcImage, -dw/2, -dh/2, dw, dh);
-      ctx.restore();
-
-      // Хромакей предпросмотра (альфа)
-      if(els.enableChroma.checked){
-        applyChromaOnCanvas(ctx, W, H, hexToRgb(els.chromaColor.value), parseInt(els.tolerance.value,10), parseInt(els.softness.value,10));
-      }
+      drawHeroFrame(tNorm, ctx, W, H, true);
     }
 
-    function applyChromaOnCanvas(ctx, W, H, key, tol, soft){
-      const img = ctx.getImageData(0,0,W,H);
-      const d = img.data;
-      for(let i=0;i<d.length;i+=4){
-        const r=d[i], g=d[i+1], b=d[i+2];
-        const dist = distance({r,g,b}, key);
-        if(dist < tol){
-          // Полная прозрачность
-          d[i+3]=0;
-        }else if(dist < tol+soft){
-          // Плавный край
-          const t = (dist - tol) / Math.max(1, soft);
-          d[i+3] = Math.round(d[i+3] * clamp(t,0,1));
-        }
-      }
-      ctx.putImageData(img,0,0);
-    }
-
-    // Плавный предпросмотр (анимация)
+    // Плавный предпросмотр
     let rafId;
     function loopPreview(){
       let start = performance.now();
@@ -590,27 +653,16 @@
       const H = parseInt(els.outH.value,10);
       if(W>7680 || H>4320) warn8kIfNeeded(W,H);
 
-      // Настройки
       const dur = parseFloat(els.duration.value||2);
       const fps = clamp(parseInt(els.fps.value||16,10),1,60);
       const totalFrames = Math.max(1, Math.round(dur * fps));
-      const eff = els.effect.value;
-      const k = parseFloat(els.intensity.value);
-      const looped = els.loop.checked;
-      const chromaOn = els.enableChroma.checked;
-      const key = hexToRgb(els.chromaColor.value);
-      const tol = parseInt(els.tolerance.value,10);
-      const soft = parseInt(els.softness.value,10);
-
       const targetMB = document.querySelector('input[name="target"]:checked').value;
       const targetBytes = targetMB==='none' ? Infinity : parseInt(targetMB,10)*1024*1024;
       const auto = els.autoCompress.checked;
 
-      // Итеративное сжатие
-      let qualityStep = 10; // gif.js "quality": ниже — лучше качество, больше размер
+      let qualityStep = 10; // чем меньше, тем лучше качество и больше размер
       let scaleMul = 1.0;
-      let dither = els.dither.value;
-      let paletteColors = clamp(parseInt(els.palette.value,10),8,256);
+      let dither = false; // можно включить FloydSteinberg при ужимании
       let blob = null;
 
       const maxIters = auto && isFinite(targetBytes) ? 6 : 1;
@@ -626,12 +678,12 @@
           quality: qualityStep,
           width: gw,
           height: gh,
+          repeat: els.loop.checked ? 0 : -1, // 0 = бесконечно, -1 = без повтора
           workerScript: 'https://cdnjs.cloudflare.com/ajax/libs/gif.js/0.2.0/gif.worker.js',
           transparent: els.transparentBg.checked ? (MAGENTA.r<<16 | MAGENTA.g<<8 | MAGENTA.b) : null,
-          dither: dither === 'none' ? false : dither,
+          dither: dither
         });
 
-        // Отрисовка кадров
         const off = document.createElement('canvas');
         off.width = gw; off.height = gh;
         const octx = off.getContext('2d');
@@ -639,60 +691,7 @@
         for(let f=0; f<totalFrames; f++){
           if(cancelFlag){ break; }
           const t = totalFrames<=1 ? 0 : f/(totalFrames-1);
-
-          // Фон
-          if(els.transparentBg.checked){
-            octx.fillStyle = 'rgb(255,0,255)';
-            octx.fillRect(0,0,gw,gh);
-          }else{
-            octx.clearRect(0,0,gw,gh);
-          }
-
-          // Эффект: расчёт параметров
-          const loopv = (Math.sin(t*2*Math.PI)+1)/2;
-          let scale = 1, dx=0, dy=0, rot=0;
-          switch(eff){
-            case 'pulse': scale = lerp(1-k, 1+k, loopv); break;
-            case 'pan': dx = Math.sin(t*2*Math.PI) * (gw*0.05*k); dy = Math.cos(t*2*Math.PI) * (gh*0.05*k); break;
-            case 'zoom-in': scale = lerp(1, 1+0.4*k, loopv); break;
-            case 'zoom-out': scale = lerp(1+0.4*k, 1, loopv); break;
-            case 'rotate': rot = (loopv-0.5) * (Math.PI/12) * (k*2); break;
-            case 'glow': default: break;
-          }
-
-          const iw=srcImage.width, ih=srcImage.height;
-          const s = Math.min(gw/iw, gh/ih) * scale;
-          const dw = iw*s, dh = ih*s;
-          const cx = gw/2 + dx, cy = gh/2 + dy;
-
-          octx.save();
-          octx.translate(cx, cy);
-          octx.rotate(rot);
-
-          if(eff==='glow'){
-            octx.filter = 'blur('+(8+20*k)+'px)';
-            octx.globalAlpha = 0.9;
-            octx.drawImage(srcImage, -dw/2, -dh/2, dw, dh);
-            octx.filter = 'none'; octx.globalAlpha = 1.0;
-          }
-          octx.drawImage(srcImage, -dw/2, -dh/2, dw, dh);
-          octx.restore();
-
-          if(chromaOn){
-            applyChromaOnCanvas(octx, gw, gh, key, tol, soft);
-            // Для прозрачной GIF с индексом: убедимся, что прозрачные пиксели на фоне магенты
-            if(els.transparentBg.checked){
-              const img = octx.getImageData(0,0,gw,gh);
-              const d = img.data;
-              for(let i=0;i<d.length;i+=4){
-                if(d[i+3]===0){
-                  d[i]=MAGENTA.r; d[i+1]=MAGENTA.g; d[i+2]=MAGENTA.b; d[i+3]=255;
-                }
-              }
-              octx.putImageData(img,0,0);
-            }
-          }
-
+          drawHeroFrame(t, octx, gw, gh, false);
           gif.addFrame(off, {delay: Math.round(1000/fps), copy:true, dispose: 2});
           setStatus(`Генерация… кадр ${f+1}/${totalFrames} | попытка ${iter+1}${maxIters>1?'/'+maxIters:''}`);
           await new Promise(r=>setTimeout(r,0)); // дать дыхание UI
@@ -710,118 +709,35 @@
         setSizeInfo(blob);
 
         if(blob.size <= targetBytes){
-          setStatus('Готово ✓', 'ok');
+          setStatus('Готово ✓ Файл скачан', 'ok');
           break;
         }
 
         if(!auto || !isFinite(targetBytes)){
-          setStatus('Готово (без автосжатия).', 'ok');
+          setStatus('Готово (без автосжатия). Файл скачан', 'ok');
           break;
         }
 
-        // Иначе — пытаемся сильнее сжать: уменьшаем масштаб и повышаем qualityStep
+        // Ужимаем сильнее: уменьшаем масштаб, повышаем qualityStep (хуже качество), включаем дизеринг
         qualityStep = Math.min(qualityStep+6, 30);
-        paletteColors = Math.max(32, Math.floor(paletteColors*0.8));
-        scaleMul = Math.max(0.3, scaleMul*0.85);
-        dither = (dither==='none') ? 'FloydSteinberg' : 'none'; // чередуем
+        scaleMul = Math.max(0.35, scaleMul*0.85);
+        dither = qualityStep >= 22 ? 'FloydSteinberg' : dither;
         setStatus(`Слишком большой файл (${humanSize(blob.size)}). Пробуем сильнее сжать…`, 'warn');
       }
 
       els.btnCancel.disabled = true;
 
       if(blob){
-        const url = URL.createObjectURL(blob);
-        els.dlGif.href = url;
-        // Предпросмотр готовой GIF в канве покажем как изображение поверх
-        // Но здесь оставим анимированный просмотр через тэг <img> в коде для Genially
-        currentGifBlob = blob;
+        const eff = els.effect.value;
+        const name = `hero-${eff}-${Date.now()}.gif`;
+        autoDownload(blob, name);
       }
     }
 
-    // --------- Code for Genially ---------
-    let currentGifBlob = null;
-
-    function buildEmbedCode(){
-      const w = parseInt(els.outW.value,10);
-      const h = parseInt(els.outH.value,10);
-      const url = els.publicUrl.value.trim();
-
-      let srcAttr = '';
-      if(url){
-        srcAttr = url;
-      }else if(currentGifBlob){
-        // data: URI (может быть большим — проверьте лимиты Genially)
-        // Преобразуем blob в base64
-        // Важно: это может быть тяжело для очень больших файлов
-        // Поэтому дадим предупреждение, если > 5 МБ
-        if(currentGifBlob.size > 5*1024*1024){
-          alert('Внимание: data: URI больше 5 МБ. Рекомендуется загрузить GIF в публичный хостинг и указать URL.');
-        }
-        // Синхронно нельзя, вернём пустую строку — пускай пользователь нажмёт кнопку ещё раз после генерации.
-        // Но здесь сделаем асинхронную вставку через промис.
-        return buildDataUriCode(w,h);
-      }else{
-        return '<!-- Сначала сгенерируйте GIF или укажите публичный URL -->';
-      }
-
-      const html = `<img src="${srcAttr}" alt="GIF" width="${w}" height="${h}" style="display:block; max-width:100%; height:auto; image-rendering:optimizeQuality; background:transparent;" ${els.loop.checked ? '' : ''}>`;
-      return html;
-    }
-
-    async function buildDataUriCode(w,h){
-      const base64 = await blobToBase64(currentGifBlob);
-      const html = `<img src="data:image/gif;base64,${base64}" alt="GIF" width="${w}" height="${h}" style="display:block; max-width:100%; height:auto; image-rendering:optimizeQuality; background:transparent;">`;
-      els.codeBox.textContent = html;
-      return html;
-    }
-
-    function blobToBase64(blob){
-      return new Promise((resolve,reject)=>{
-        const fr = new FileReader();
-        fr.onload = ()=> resolve(fr.result.split(',')[1]);
-        fr.onerror = reject;
-        fr.readAsDataURL(blob);
-      });
-    }
-
-    els.btnBuildCode.addEventListener('click', async ()=>{
-      if(els.publicUrl.value.trim()){
-        const html = buildEmbedCode();
-        els.codeBox.textContent = html;
-      }else{
-        if(!currentGifBlob){
-          els.codeBox.textContent = '<!-- Нет GIF. Сначала сгенерируйте или укажите URL -->';
-          return;
-        }
-        await buildDataUriCode(parseInt(els.outW.value,10), parseInt(els.outH.value,10));
-      }
-    });
-
-    els.btnCopy.addEventListener('click', async ()=>{
-      const code = els.codeBox.textContent.trim();
-      if(!code){ return; }
-      try{
-        await navigator.clipboard.writeText(code);
-        const old = els.btnCopy.textContent;
-        els.btnCopy.textContent = 'Скопировано';
-        els.btnCopy.disabled = true;
-        setTimeout(()=>{ els.btnCopy.textContent = old; els.btnCopy.disabled=false; }, 1400);
-      }catch(e){
-        // fallback
-        const ta = document.createElement('textarea');
-        ta.value = code; document.body.appendChild(ta); ta.select();
-        document.execCommand('copy'); document.body.removeChild(ta);
-        const old = els.btnCopy.textContent;
-        els.btnCopy.textContent = 'Скопировано';
-        els.btnCopy.disabled = true;
-        setTimeout(()=>{ els.btnCopy.textContent = old; els.btnCopy.disabled=false; }, 1400);
-      }
-    });
-
-    // Обновление предпросмотра при смене любого параметра
+    // Обновление предпросмотра при смене параметров
     ['change','input'].forEach(ev=>{
       document.addEventListener(ev, (e)=>{
-        if(e.target && (e.target.matches('#effect,#intensity,#duration,#fps,#outW,#outH,#transparentBg,#enableChroma,#chromaColor,#tolerance,#softness'))){
+        if(e.target && (e.target.matches('#effect,#intensity,#duration,#fps,#outW,#outH,#transparentBg,#enableChroma,#chromaColor,#tolerance,#softness,#shots'))){
           drawPreview(0);
         }
       }, true);
