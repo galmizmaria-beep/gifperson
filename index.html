@@ -1,1038 +1,319 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Neon GIF Constructor</title>
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
-  <style>
-    :root{
-      --bg1:#0b1020; --bg2:#0e1330; --txt:#dfe7ff; --muted:#9bb0ff;
-      --primary:#5e8bff; --secondary:#e445ff; --accent:#2ef2ff;
-      --ok:#53f28f; --warn:#ffcf4a; --err:#ff5e6b;
-      --panel:#101936cc; --neon: 0 0 18px rgba(94,139,255,.7), 0 0 42px rgba(244,67,255,.35), 0 0 72px rgba(46,242,255,.3);
-      --radius:16px;
-    }
-    *{box-sizing:border-box}
-    html,body{
-      margin:0;padding:0;
-      background:radial-gradient(1200px 700px at 80% 0%, #2b0c3a 0%, transparent 50%), radial-gradient(900px 600px at 0% 100%, #0b2b4a 0%, transparent 45%), linear-gradient(120deg, var(--bg1), var(--bg2));
-      color:var(--txt); font-family:Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif
-    }
-    a{color:var(--accent); text-decoration:none}
-    h1{font-size:38px; line-height:1.1; margin:12px 0 8px}
-    h2{font-size:20px; margin:0 0 10px}
-    p{color:var(--muted); margin:6px 0 12px}
-    .wrap{max-width:1300px; margin:0 auto; padding:28px 18px 40px}
-    .header{display:flex;align-items:center;justify-content:space-between;gap:12px; margin-bottom:18px}
-    .brand{display:flex;align-items:center;gap:12px}
-    .logo{width:40px;height:40px;border-radius:12px;background:linear-gradient(135deg, #5e8bff, #e445ff); box-shadow:var(--neon)}
-    .brand b{font-size:20px; letter-spacing:.5px}
-    .cta{display:flex;gap:10px;flex-wrap:wrap}
-    .btn{
-      background:linear-gradient(135deg, #5e8bff, #e445ff);
-      color:white; padding:10px 16px; border:none; border-radius:12px; cursor:pointer; font-weight:600;
-      box-shadow:0 6px 22px rgba(94,139,255,.25), 0 0 0 1px rgba(255,255,255,.06) inset;
-      transition:transform .15s ease, box-shadow .2s ease, filter .2s ease;
-    }
-    .btn:hover{transform:translateY(-1px); box-shadow:var(--neon); filter:saturate(1.15)}
-    .btn.secondary{background:linear-gradient(135deg, #2ef2ff, #5e8bff)}
-    .btn.ghost{background:transparent; color:var(--txt); border:1px solid #2a385f; box-shadow:none}
-    .btn.ghost:hover{box-shadow:0 0 22px rgba(94,139,255,.35)}
-    .grid{display:grid; grid-template-columns:0.9fr 1.6fr; gap:18px}
-    @media (max-width: 980px){ .grid{grid-template-columns:1fr; } }
-    .panel{
-      background:linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,0)) , rgba(16,25,54,.6);
-      border:1px solid rgba(135,157,255,.18);
-      border-radius:var(--radius); padding:16px; position:relative; overflow:hidden;
-    }
-    .panel:hover{box-shadow:0 0 0 1px rgba(135,157,255,.28) inset, 0 0 28px rgba(94,139,255,.22)}
-    .panel .badge{
-      position:absolute; top:12px; right:12px; font-size:12px; color:#0a1530; background:linear-gradient(135deg, #2ef2ff, #5e8bff);
-      padding:4px 8px; border-radius:999px; font-weight:700; letter-spacing:.3px
-    }
-    .section{display:grid; gap:12px; margin:10px 0}
-    .row{display:flex; gap:10px; align-items:center; flex-wrap:wrap}
-    label{font-size:13px; color:var(--muted)}
-    input[type="text"], input[type="number"], input[type="url"], select{
-      width:100%; background:#0c1430; color:var(--txt); border:1px solid #253159; border-radius:12px; padding:10px 12px; outline:none;
-      transition:box-shadow .2s, border-color .2s;
-    }
-    input[type="range"]{width:100%}
-    input:focus, select:focus{border-color:#5e8bff; box-shadow:0 0 0 3px rgba(94,139,255,.2)}
-    .file{position:relative}
-    .file input[type="file"]{position:absolute; inset:0; opacity:0; cursor:pointer}
-    .file .fake{display:flex;align-items:center;justify-content:center; gap:10px; border:1px dashed #2a385f; border-radius:12px; padding:14px; color:var(--muted)}
-    .pill{display:inline-flex; align-items:center; gap:8px; padding:6px 10px; border-radius:999px; background:#0c1430; border:1px solid #2a385f; color:var(--muted)}
-    .note{font-size:12px; color:#9eb5ff}
-    .warn{color:var(--warn)}
-    .err{color:var(--err)}
-    .ok{color:var(--ok)}
-    .preview{display:grid; gap:10px}
-    canvas{width:100%; background:transparent; border-radius:12px; border:1px solid #253159; min-height:420px}
-    .neon-hover:hover{box-shadow:var(--neon)}
-    .hr{height:1px; background:linear-gradient(90deg, transparent, rgba(135,157,255,.36), transparent); margin:8px 0}
-    .footer{opacity:.7; font-size:12px; text-align:center; margin-top:18px}
-    .switch{display:inline-flex;align-items:center;gap:8px}
-    .switch input{accent-color:#5e8bff}
-    .small{font-size:12px}
-    .flex{display:flex; gap:10px; align-items:center}
-    .muted{color:#9bb0ff}
-    .row.right{justify-content:flex-end}
-    .sub{font-size:12px; opacity:.85}
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Удивительный GIF Конструктор</title>
+    <style>
+        /* Базовые настройки и фон магического леса */
+        body {
+            margin: 0;
+            padding: 20px;
+            font-family: 'Comic Sans MS', 'Arial Rounded MT Bold', sans-serif;
+            background: radial-gradient(circle at center, #0a2e1f 0%, #020b08 100%);
+            color: white;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        /* Деревянная вывеска (Заголовок) */
+        .wood-sign {
+            background: linear-gradient(to bottom, #6b4423, #3d2314);
+            padding: 15px 40px;
+            border-radius: 10px;
+            border: 3px solid #2a160b;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.8), inset 0 0 10px rgba(0,0,0,0.5);
+            text-align: center;
+            margin-bottom: 30px;
+            position: relative;
+        }
+        .wood-sign h1 {
+            margin: 0;
+            color: #d4e86a;
+            font-size: 36px;
+            text-shadow: 2px 2px 0px #1a3300, 4px 4px 5px rgba(0,0,0,0.8);
+            text-transform: uppercase;
+        }
+
+        /* Сетка конструктора */
+        .grid-container {
+            display: grid;
+            grid-template-columns: 300px 1fr 300px;
+            gap: 20px;
+            width: 100%;
+            max-width: 1200px;
+        }
+
+        /* Стиль панелей-карточек (как на картинке) */
+        .panel {
+            background: rgba(10, 30, 25, 0.85);
+            border-radius: 20px;
+            padding: 20px;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.5);
+            transition: all 0.3s ease;
+            backdrop-filter: blur(5px);
+        }
+
+        /* Неоновые эффекты при наведении (разные цвета для разделов) */
+        .panel.green:hover { border-color: #7fff00; box-shadow: 0 0 20px #7fff00; }
+        .panel.yellow:hover { border-color: #ffd700; box-shadow: 0 0 20px #ffd700; }
+        .panel.blue:hover { border-color: #00bfff; box-shadow: 0 0 20px #00bfff; }
+        .panel.purple:hover { border-color: #da70d6; box-shadow: 0 0 20px #da70d6; }
+
+        .panel-title {
+            color: #ffd700;
+            font-size: 20px;
+            margin-top: 0;
+            text-align: center;
+            border-bottom: 1px dashed rgba(255,255,255,0.3);
+            padding-bottom: 10px;
+        }
+
+        /* Элементы управления */
+        input[type="file"], input[type="text"], select, button {
+            width: 100%;
+            padding: 10px;
+            margin-top: 10px;
+            border-radius: 8px;
+            border: 1px solid #444;
+            background: rgba(0,0,0,0.5);
+            color: white;
+            box-sizing: border-box;
+            font-family: inherit;
+        }
+        
+        label {
+            font-size: 14px;
+            color: #a0d8c0;
+            display: block;
+            margin-top: 15px;
+        }
+
+        /* Центральный экран предпросмотра */
+        .preview-area {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 400px;
+            border: 2px dashed rgba(255,255,255,0.2);
+            border-radius: 20px;
+            position: relative;
+            background: repeating-conic-gradient(rgba(0,0,0,0.1) 0% 25%, transparent 0% 50%) 50% / 20px 20px;
+        }
+        .preview-area img {
+            max-width: 100%;
+            max-height: 500px;
+            border-radius: 10px;
+            object-fit: contain;
+        }
+
+        /* Кнопки действий */
+        .btn-action {
+            background: linear-gradient(135deg, #2e8b57, #006400);
+            color: white;
+            font-weight: bold;
+            font-size: 16px;
+            cursor: pointer;
+            border: 2px solid #3cb371;
+            transition: all 0.3s ease;
+        }
+        .btn-action:hover {
+            background: #3cb371;
+            box-shadow: 0 0 15px #3cb371;
+            transform: scale(1.05);
+        }
+
+        .btn-download {
+            background: linear-gradient(135deg, #ffd700, #ff8c00);
+            color: #333;
+            font-size: 20px;
+            border: 2px solid #fff;
+            margin-top: 20px;
+            padding: 15px;
+            animation: pulse 2s infinite;
+        }
+        .btn-download:hover {
+            box-shadow: 0 0 25px #ffd700;
+        }
+
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(255, 215, 0, 0.7); }
+            70% { box-shadow: 0 0 0 15px rgba(255, 215, 0, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(255, 215, 0, 0); }
+        }
+
+        /* Ползунки и радио-кнопки */
+        .radio-group { display: flex; justify-content: space-between; margin-top: 10px; }
+        .radio-group label { display: inline; margin: 0; color: white; cursor: pointer; }
+        
+        /* Анимация при обработке */
+        .processing { filter: brightness(1.5) sepia(1) hue-rotate(90deg) saturate(3); animation: shake 0.5s infinite; }
+        @keyframes shake { 0% { transform: translate(1px, 1px) rotate(0deg); } 50% { transform: translate(-1px, -2px) rotate(-1deg); } 100% { transform: translate(1px, -1px) rotate(1deg); } }
+
+    </style>
 </head>
 <body>
-  <div class="wrap">
-    <div class="header">
-      <div class="brand">
-        <div class="logo"></div>
-        <div>
-          <b>Neon GIF Constructor</b><br>
-          <span class="small" style="color:#9bb0ff">Загрузка • Оживление героя • Прозрачность • Экспорт • Скачать GIF</span>
-        </div>
-      </div>
-      <div class="cta">
-        <button class="btn ghost" id="btnDownload" disabled>Скачать GIF</button>
-      </div>
+
+    <div class="wood-sign">
+        <h1>✨ Магический GIF Конструктор ✨</h1>
     </div>
 
-    <div class="grid">
-      <!-- Left: Controls (smaller) -->
-      <div class="panel">
-        <span class="badge">Настройки</span>
-        <h1>Оживите героя</h1>
-        <p>Загрузите изображение, выберите эффект и сгенерируйте GIF. Можно скачать кнопкой «Скачать GIF».</p>
+    <div class="grid-container">
+        <!-- ЛЕВАЯ ПАНЕЛЬ: Загрузка и Фон -->
+        <div class="column">
+            <div class="panel green">
+                <h2 class="panel-title">1. Источник магии</h2>
+                <label>Загрузить с устройства:</label>
+                <input type="file" id="fileInput" accept="image/*">
+                
+                <label>Или вставить ссылку:</label>
+                <input type="text" id="urlInput" placeholder="https://.../image.jpg">
+                <button class="btn-action" onclick="loadImageFromUrl()">Загрузить по ссылке</button>
+            </div>
 
-        <div class="section">
-          <h2>1) Источник</h2>
-          <div class="row">
-            <div class="file" style="flex:1">
-              <div class="fake neon-hover"><span>Перетащите файл или нажмите, чтобы выбрать</span></div>
-              <input id="fileInput" type="file" accept="image/*">
+            <div class="panel blue" style="margin-top: 20px;">
+                <h2 class="panel-title">2. Работа с фоном</h2>
+                <button class="btn-action" id="btnRemoveBg" onclick="removeBackground()">✨ Удалить фон (Магия AI)</button>
+                <button class="btn-action" style="margin-top: 10px;" onclick="toggleTransparency()">Сделать фон прозрачным</button>
             </div>
-          </div>
-          <div class="row">
-            <div style="flex:1; min-width:260px">
-              <label for="urlInput">URL картинки (нужен CORS)</label>
-              <input id="urlInput" type="url" placeholder="https://example.com/image.png">
-            </div>
-            <button class="btn secondary" id="btnLoadUrl" title="Загрузить по ссылке">Загрузить</button>
-          </div>
-          <div class="note">Поддержка: PNG/JPG/WebP/SVG(растрируется). Для URL требуются корректные CORS-заголовки.</div>
         </div>
 
-        <div class="hr"></div>
-
-        <div class="section">
-          <h2>2) Фон и прозрачность</h2>
-          <div class="row">
-            <div class="switch">
-              <input type="checkbox" id="transparentBg">
-              <label for="transparentBg">Прозрачный фон GIF</label>
+        <!-- ЦЕНТРАЛЬНАЯ ПАНЕЛЬ: Предпросмотр -->
+        <div class="column">
+            <div class="panel yellow preview-area" id="previewPanel">
+                <h2 class="panel-title" style="position: absolute; top: 10px; background: rgba(0,0,0,0.5); padding: 5px 15px; border-radius: 10px;">Волшебное зеркало</h2>
+                <img id="previewImage" src="" alt="Ваш герой появится здесь" style="display: none;">
+                <p id="placeholderText">Загрузите картинку для начала...</p>
             </div>
-            <div class="switch">
-              <input type="checkbox" id="enableChroma">
-              <label for="enableChroma">Удалить фон (хромакей)</label>
-            </div>
-            <span class="pill small">Пипетка: клик по предпросмотру</span>
-          </div>
-          <div class="row">
-            <div style="flex:1">
-              <label>Цвет хромакея</label>
-              <input id="chromaColor" type="text" value="#00ff00">
-            </div>
-            <div style="flex:1">
-              <label>Толерантность: <span id="tolVal">50</span></label>
-              <input id="tolerance" type="range" min="0" max="255" value="50">
-            </div>
-            <div style="flex:1">
-              <label>Мягкость края: <span id="softVal">12</span></label>
-              <input id="softness" type="range" min="0" max="80" value="12">
-            </div>
-          </div>
         </div>
 
-        <div class="hr"></div>
+        <!-- ПРАВАЯ ПАНЕЛЬ: Анимация и Экспорт -->
+        <div class="column">
+            <div class="panel purple">
+                <h2 class="panel-title">3. Оживление героя</h2>
+                <label>Выберите заклинание (Эффект):</label>
+                <select id="effectSelect">
+                    <option>Не выбрано</option>
+                    <optgroup label="Лицо">
+                        <option>Подмигивание и улыбка</option>
+                        <option>Разговор (движение губ)</option>
+                        <option>Удивление (глаза)</option>
+                    </optgroup>
+                    <optgroup label="Руки">
+                        <option>Машет рукой (Приветствие)</option>
+                        <option>Магический пасс руками</option>
+                        <option>Указывает пальцем</option>
+                    </optgroup>
+                    <optgroup label="Тело">
+                        <option>Дыхание (поднятие груди)</option>
+                        <option>Легкое покачивание (Idle)</option>
+                        <option>Прыжок на месте</option>
+                    </optgroup>
+                    <optgroup label="Окружение">
+                        <option>Светящиеся споры (как на грибах)</option>
+                        <option>Падающие листья</option>
+                    </optgroup>
+                </select>
+                <button class="btn-action" onclick="applyEffect()">Применить анимацию</button>
+            </div>
 
-        <div class="section">
-          <h2>3) Эффект</h2>
-          <div class="row">
-            <div style="flex:1 1 100%">
-              <label for="effect">Тип эффекта</label>
-              <select id="effect">
-                <option value="none">Без эффекта</option>
-                <optgroup label="Движение героя">
-                  <option value="breath">Дыхание</option>
-                  <option value="run">Бег</option>
-                  <option value="hover">Парение</option>
-                  <option value="dash">Рывок (послеобразы)</option>
-                  <option value="earthquake">Землетрясение (тряска камеры)</option>
-                </optgroup>
-                <optgroup label="Боевые / ударные">
-                  <option value="shoot">Выстрел (вспышка + отдача)</option>
-                  <option value="hit">Удар (встряска + белый фрейм)</option>
-                  <option value="shockwave">Ударная волна</option>
-                  <option value="damageFlash">Повреждение (красный флэш)</option>
-                </optgroup>
-                <optgroup label="Ауры / баффы / дебаффы">
-                  <option value="shield">Энергетический щит</option>
-                  <option value="healRing">Лечащее кольцо</option>
-                  <option value="buffAura">Аура баффа</option>
-                  <option value="poisonAura">Ядовитая аура</option>
-                  <option value="electric">Электрические дуги</option>
-                </optgroup>
-                <optgroup label="VFX / стилизация">
-                  <option value="glowPulse">Неоновый пульс</option>
-                  <option value="outlineNeon">Неоновый контур</option>
-                  <option value="glitch">Глитч (RGB-сдвиг)</option>
-                  <option value="hologram">Голограмма</option>
-                  <option value="scanlines">Скан-линии</option>
-                  <option value="pixelate">Пикселизация</option>
-                  <option value="flicker">Мерцание</option>
-                  <option value="warp">Варп (полосы-искажения)</option>
-                  <option value="rain">Дождь</option>
-                  <option value="snow">Снег</option>
-                  <option value="smoke">Дым</option>
-                  <option value="fire">Огонь</option>
-                </optgroup>
-              </select>
-            </div>
-            <div style="flex:1">
-              <label>Сила: <span id="intVal">0.30</span></label>
-              <input id="intensity" type="range" min="0" max="1" step="0.01" value="0.30">
-            </div>
-          </div>
+            <div class="panel green" style="margin-top: 20px;">
+                <h2 class="panel-title">4. Экспорт зелья</h2>
+                <label>Сжатие (Размер файла):</label>
+                <div class="radio-group">
+                    <label><input type="radio" name="size" checked> До 5 МБ</label>
+                    <label><input type="radio" name="size"> До 10 МБ</label>
+                </div>
 
-          <div class="row" id="shootRow" style="display:none">
-            <button class="btn ghost" id="btnPickFlash">Указать точку вспышки</button>
-            <span class="pill" id="flashInfo">Точка: —</span>
-            <div style="flex:1; min-width:140px">
-              <label>Выстрелов за цикл: <span id="shotsVal">1</span></label>
-              <input id="shots" type="range" min="1" max="5" step="1" value="1">
-            </div>
-          </div>
+                <label>Качество (Разрешение):</label>
+                <select>
+                    <option>Стандарт (720p)</option>
+                    <option>HD (1080p)</option>
+                    <option>4K Ultra</option>
+                    <option>8K Magic (Макс. плотность)</option>
+                </select>
 
-          <div class="row">
-            <div style="flex:1">
-              <label>Длительность цикла (сек)</label>
-              <input id="duration" type="number" min="0.5" step="0.1" value="2.0">
+                <button class="btn-action btn-download" onclick="downloadGif()">💾 СКАЧАТЬ GIF</button>
             </div>
-            <div style="flex:1">
-              <label>FPS</label>
-              <input id="fps" type="number" min="1" max="60" value="16">
-            </div>
-            <div class="switch">
-              <input type="checkbox" id="loop" checked>
-              <label for="loop">Зациклить</label>
-            </div>
-          </div>
-          <div class="sub muted">Подсказка: много эффектов можно комбинировать с хромакеем/прозрачностью для UI/спрайтов.</div>
         </div>
-
-        <div class="hr"></div>
-
-        <div class="section">
-          <h2>4) Размер и экспорт</h2>
-          <div class="row">
-            <div style="flex:1">
-              <label>Ширина (px)</label>
-              <input id="outW" type="number" min="16" value="900">
-            </div>
-            <div style="flex:1">
-              <label>Высота (px)</label>
-              <input id="outH" type="number" min="16" value="600">
-            </div>
-            <div class="switch">
-              <input type="checkbox" id="lockAspect" checked>
-              <label for="lockAspect">Сохранять пропорции</label>
-            </div>
-            <div class="switch">
-              <input type="checkbox" id="warn8k" checked>
-              <label for="warn8k">Предупреждать про 8K</label>
-            </div>
-          </div>
-
-          <div class="row right">
-            <button class="btn" id="btnGenerate">Сгенерировать GIF</button>
-            <button class="btn ghost" id="btnCancel" disabled>Отмена</button>
-          </div>
-          <div class="row">
-            <span id="status" class="note">Готов к работе</span>
-          </div>
-        </div>
-      </div>
-
-      <!-- Right: Preview (larger) -->
-      <div class="panel">
-        <span class="badge">Предпросмотр</span>
-        <div class="preview">
-          <canvas id="stage" width="900" height="600"></canvas>
-        </div>
-      </div>
     </div>
 
-    <div class="footer">
-      Совет: для лучшего результата используйте однотонный фон (для хромакея), и помните — чем меньше размеры и FPS, тем меньше итоговый размер GIF.
-    </div>
-  </div>
+    <script>
+        const fileInput = document.getElementById('fileInput');
+        const previewImage = document.getElementById('previewImage');
+        const placeholderText = document.getElementById('placeholderText');
 
-  <!-- GIF.js -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/gif.js/0.2.0/gif.js"></script>
+        // Обработка загрузки файла
+        fileInput.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    previewImage.src = event.target.result;
+                    previewImage.style.display = 'block';
+                    placeholderText.style.display = 'none';
+                }
+                reader.readAsDataURL(file);
+            }
+        });
 
-  <script>
-    // --------- Elements & State ---------
-    const els = {
-      file: document.getElementById('fileInput'),
-      url: document.getElementById('urlInput'),
-      loadUrl: document.getElementById('btnLoadUrl'),
-      stage: document.getElementById('stage'),
-      effect: document.getElementById('effect'),
-      intensity: document.getElementById('intensity'),
-      intVal: document.getElementById('intVal'),
-      duration: document.getElementById('duration'),
-      fps: document.getElementById('fps'),
-      outW: document.getElementById('outW'),
-      outH: document.getElementById('outH'),
-      lockAspect: document.getElementById('lockAspect'),
-      warn8k: document.getElementById('warn8k'),
-      transparentBg: document.getElementById('transparentBg'),
-      enableChroma: document.getElementById('enableChroma'),
-      chromaColor: document.getElementById('chromaColor'),
-      tolerance: document.getElementById('tolerance'),
-      tolVal: document.getElementById('tolVal'),
-      softness: document.getElementById('softness'),
-      softVal: document.getElementById('softVal'),
-      btnGenerate: document.getElementById('btnGenerate'),
-      btnCancel: document.getElementById('btnCancel'),
-      status: document.getElementById('status'),
-      loop: document.getElementById('loop'),
-      shootRow: document.getElementById('shootRow'),
-      btnPickFlash: document.getElementById('btnPickFlash'),
-      flashInfo: document.getElementById('flashInfo'),
-      shots: document.getElementById('shots'),
-      shotsVal: document.getElementById('shotsVal'),
-      btnDownload: document.getElementById('btnDownload'),
-    };
-
-    const ctx = els.stage.getContext('2d');
-    let srcImage = new Image();
-    let srcLoaded = false;
-    let aspect = 1;
-    let cancelFlag = false;
-    const MAGENTA = {r:255,g:0,b:255}; 
-    let pickFlashMode = false;
-    let flashPoint = null; 
-    let lastBlob = null;
-
-    // --- ФИКС CORS ДЛЯ WEB WORKER ---
-    let gifWorkerUrl = 'https://cdnjs.cloudflare.com/ajax/libs/gif.js/0.2.0/gif.worker.js';
-    fetch(gifWorkerUrl)
-      .then(res => res.text())
-      .then(text => {
-        const blob = new Blob([text], { type: 'application/javascript' });
-        gifWorkerUrl = URL.createObjectURL(blob); // Создаем локальную ссылку для воркера
-      })
-      .catch(console.error);
-    // --------------------------------
-
-    // --------- Helpers ---------
-    function hexToRgb(hex){
-      hex = hex.replace('#','');
-      if(hex.length===3) hex = hex.split('').map(h=>h+h).join('');
-      const num = parseInt(hex,16);
-      return {r:(num>>16)&255, g:(num>>8)&255, b:num&255};
-    }
-    function clamp(v,min,max){return Math.max(min, Math.min(max, v));}
-    function lerp(a,b,t){return a+(b-a)*t;}
-    function distance(c1,c2){
-      const dr=c1.r-c2.r, dg=c1.g-c2.g, db=c1.b-c2.b;
-      return Math.sqrt(dr*dr+dg*dg+db*db);
-    }
-    function setStatus(msg, cls=''){
-      els.status.className = 'note ' + (cls||'');
-      els.status.textContent = msg;
-    }
-    function withCORS(url){
-      const img = new Image();
-      img.crossOrigin = 'anonymous';
-      img.src = url;
-      return img;
-    }
-    function fitOutputToAspect(){
-      if(!els.lockAspect.checked || !aspect) return;
-      const w = parseInt(els.outW.value||0,10);
-      els.outH.value = Math.round(w / (1/aspect));
-    }
-    function warn8kIfNeeded(w,h){
-      const over8k = w>7680 || h>4320 || (w>=7000 || h>=4000);
-      if(els.warn8k.checked && over8k){
-        alert('Внимание: 8K GIF крайне тяжело генерировать в браузере и почти невозможно уложить в небольшой размер. Рекомендуется уменьшить размер или FPS.');
-      }
-    }
-    function saveBlob(blob, name='result.gif'){
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = name;
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      setTimeout(()=>URL.revokeObjectURL(url), 60000);
-    }
-
-    // --------- Loaders ---------
-    els.file.addEventListener('change', async (e)=>{
-      const file = e.target.files?.[0];
-      if(!file) return;
-      const url = URL.createObjectURL(file);
-      await loadSource(url);
-      URL.revokeObjectURL(url);
-    });
-    els.loadUrl.addEventListener('click', async ()=>{
-      if(!els.url.value) return;
-      await loadSource(els.url.value, true);
-    });
-
-    async function loadSource(url, cors=false){
-      return new Promise((resolve,reject)=>{
-        const img = cors ? withCORS(url) : new Image();
-        img.onload = ()=>{
-          srcImage = img;
-          srcLoaded = true;
-          aspect = img.width / img.height;
-          if(els.lockAspect.checked){
-            fitOutputToAspect();
-          }
-          drawPreview(0);
-          setStatus('Источник загружен: '+img.width+'×'+img.height, 'ok');
-          resolve();
-        };
-        img.onerror = ()=>{
-          setStatus('Не удалось загрузить изображение (возможен CORS)', 'err');
-          reject();
-        };
-        img.src = url;
-      });
-    }
-
-    // --------- UI bindings ---------
-    els.intensity.addEventListener('input', ()=> els.intVal.textContent = els.intensity.value);
-    els.tolerance.addEventListener('input', ()=> els.tolVal.textContent = els.tolerance.value);
-    els.softness.addEventListener('input', ()=> els.softVal.textContent = els.softness.value);
-    els.outW.addEventListener('input', ()=>{ if(els.lockAspect.checked) fitOutputToAspect(); });
-    els.outH.addEventListener('input', ()=>{
-      if(els.lockAspect.checked){
-        const h = parseInt(els.outH.value||0,10);
-        els.outW.value = Math.round(h * aspect);
-      }
-    });
-    els.effect.addEventListener('change', ()=>{
-      const eff = els.effect.value;
-      els.shootRow.style.display = eff==='shoot' ? '' : 'none';
-    });
-    els.shots.addEventListener('input', ()=> els.shotsVal.textContent = els.shots.value);
-
-    els.btnPickFlash?.addEventListener('click', ()=>{
-      pickFlashMode = !pickFlashMode;
-      els.btnPickFlash.textContent = pickFlashMode ? 'Нажмите по предпросмотру…' : 'Указать точку вспышки';
-      els.btnPickFlash.classList.toggle('secondary', pickFlashMode);
-    });
-
-    els.stage.addEventListener('click', (e)=>{
-      const rect = els.stage.getBoundingClientRect();
-      const x = Math.floor((e.clientX - rect.left) * (els.stage.width/rect.width));
-      const y = Math.floor((e.clientY - rect.top) * (els.stage.height/rect.height));
-
-      if(pickFlashMode && els.effect.value==='shoot'){
-        flashPoint = {x,y};
-        els.flashInfo.textContent = `Точка: ${x}, ${y}`;
-        pickFlashMode = false;
-        els.btnPickFlash.textContent = 'Указать точку вспышки';
-        els.btnPickFlash.classList.remove('secondary');
-        drawPreview(0);
-        return;
-      }
-      if(els.enableChroma.checked){
-        const p = ctx.getImageData(x,y,1,1).data;
-        const hex = '#'+[p[0],p[1],p[2]].map(v=>v.toString(16).padStart(2,'0')).join('');
-        els.chromaColor.value = hex;
-        drawPreview(0);
-      }
-    });
-
-    // --------- Drawing helpers ---------
-    function applyChromaOnCanvas(ctx, W, H, key, tol, soft){
-      const img = ctx.getImageData(0,0,W,H);
-      const d = img.data;
-      for(let i=0;i<d.length;i+=4){
-        const r=d[i], g=d[i+1], b=d[i+2];
-        const dist = distance({r,g,b}, key);
-        if(dist < tol){
-          d[i+3]=0;
-        }else if(dist < tol+soft){
-          const t = (dist - tol) / Math.max(1, soft);
-          d[i+3] = Math.round(d[i+3] * clamp(t,0,1));
+        // Имитация загрузки по ссылке
+        function loadImageFromUrl() {
+            const url = document.getElementById('urlInput').value;
+            if(url) {
+                previewImage.src = url;
+                previewImage.style.display = 'block';
+                placeholderText.style.display = 'none';
+            } else {
+                alert('Пожалуйста, вставьте ссылку!');
+            }
         }
-      }
-      ctx.putImageData(img,0,0);
-    }
-    function drawScanlines(ctx, W, H, a=0.15, gap=3){
-      ctx.save();
-      ctx.globalAlpha = a;
-      ctx.fillStyle = 'rgba(180,200,255,0.9)';
-      for(let y=0;y<H;y+=gap){
-        ctx.fillRect(0,y, W, 1);
-      }
-      ctx.restore();
-    }
-    function drawShockwave(ctx, cx, cy, t, W, H, k){
-      const r = Math.max(W,H) * (0.05 + 0.45*t);
-      const g = ctx.createRadialGradient(cx, cy, r*0.8, cx, cy, r);
-      g.addColorStop(0, 'rgba(255,255,255,'+(0.25*(1-t)*k+0.05)+')');
-      g.addColorStop(1, 'rgba(255,255,255,0)');
-      ctx.save();
-      ctx.globalCompositeOperation = 'screen';
-      ctx.strokeStyle = g;
-      ctx.lineWidth = Math.max(2, 10*(1-t));
-      ctx.beginPath(); ctx.arc(cx, cy, r, 0, Math.PI*2); ctx.stroke();
-      ctx.restore();
-    }
-    function drawGlitch(ctx, offCanvas, x, y, w, h, t, k){
-      const offCtx = offCanvas.getContext('2d');
-      const shift = 6 + 18*k*Math.sin(t*12*Math.PI);
-      ctx.save();
-      ctx.globalCompositeOperation = 'lighter';
-      ctx.globalAlpha = 0.6;
-      ctx.drawImage(offCanvas, x, y);
-      ctx.globalAlpha = 0.35;
-      ctx.filter = 'hue-rotate(330deg)';
-      ctx.drawImage(offCanvas, x-shift, y);
-      ctx.filter = 'hue-rotate(180deg)';
-      ctx.drawImage(offCanvas, x+shift, y);
-      ctx.restore();
 
-      const slices = 8;
-      for(let i=0;i<slices;i++){
-        const sy = Math.floor(h*(i+Math.random()*0.2)/slices);
-        const sh = Math.max(2, Math.floor(h/slices*0.6));
-        const dx = ((Math.random()*2-1)*20)*k;
-        ctx.drawImage(offCanvas, x, y+sy, w, sh, x+dx, y+sy, w, sh);
-      }
-    }
-    function drawPixelate(ctx, offCanvas, x, y, w, h, k){
-      const s = clamp(Math.floor(12 + 48*k), 6, 96);
-      const tmp = document.createElement('canvas');
-      tmp.width = Math.max(2, Math.floor(w/s));
-      tmp.height = Math.max(2, Math.floor(h/s));
-      const tctx = tmp.getContext('2d');
-      tctx.imageSmoothingEnabled = false;
-      tctx.drawImage(offCanvas, 0, 0, tmp.width, tmp.height);
-      ctx.save();
-      ctx.imageSmoothingEnabled = false;
-      ctx.drawImage(tmp, x, y, w, h);
-      ctx.restore();
-    }
-    function drawRain(ctx, W, H, t, k){
-      ctx.save();
-      ctx.strokeStyle = 'rgba(200,220,255,0.6)';
-      ctx.lineWidth = 1;
-      const count = Math.floor(120 * (0.4+0.6*k));
-      const speed = 280 * (0.6+0.8*k);
-      for(let i=0;i<count;i++){
-        const rx = (i*97)%W;
-        const ry = (i*53 + (t*speed)) % (H+40) - 40;
-        ctx.beginPath();
-        ctx.moveTo(rx, ry);
-        ctx.lineTo(rx-8, ry+18);
-        ctx.stroke();
-      }
-      ctx.restore();
-    }
-    function drawSnow(ctx, W, H, t, k){
-      ctx.save();
-      const count = Math.floor(140*(0.4+0.6*k));
-      ctx.fillStyle = 'rgba(255,255,255,0.85)';
-      for(let i=0;i<count;i++){
-        const sx = (i*73 + Math.sin(i+ t*0.7)*30) % W;
-        const sy = (i*41 + t*60*(0.5+0.8*k)) % (H+10) - 10;
-        const r = 1 + (i%3)*0.6;
-        ctx.beginPath(); ctx.arc(sx, sy, r, 0, Math.PI*2); ctx.fill();
-      }
-      ctx.restore();
-    }
-    function drawSmoke(ctx, W, H, t, k){
-      ctx.save();
-      ctx.globalCompositeOperation = 'lighter';
-      const p = 24 + Math.floor(32*k);
-      for(let i=0;i<p;i++){
-        const baseX = W*0.5 + Math.sin(i*1.7 + t*1.2)*60;
-        const y = H*0.8 - (t*H*0.2 + i*14)%(H*0.9);
-        const r = 18 + (i%5)*6;
-        const g = ctx.createRadialGradient(baseX, y, 0, baseX, y, r);
-        g.addColorStop(0, 'rgba(180,190,210,0.08)');
-        g.addColorStop(1, 'rgba(180,190,210,0)');
-        ctx.fillStyle = g;
-        ctx.beginPath(); ctx.arc(baseX, y, r, 0, Math.PI*2); ctx.fill();
-      }
-      ctx.restore();
-    }
-    function drawFire(ctx, W, H, t, k){
-      ctx.save();
-      ctx.globalCompositeOperation = 'screen';
-      const p = 28 + Math.floor(32*k);
-      for(let i=0;i<p;i++){
-        const x = W*0.5 + Math.sin(i*2.3 + t*6)*20;
-        const y = H*0.9 - ((i*20 + t*180) % (H*0.5));
-        const r = 10 + (i%7)*3;
-        const g = ctx.createRadialGradient(x,y,0,x,y,r);
-        g.addColorStop(0,'rgba(255,200,80,0.45)');
-        g.addColorStop(1,'rgba(255,120,0,0)');
-        ctx.fillStyle = g;
-        ctx.beginPath(); ctx.arc(x,y,r,0,Math.PI*2); ctx.fill();
-      }
-      ctx.restore();
-    }
-    function drawElectric(ctx, W, H, t, k){
-      ctx.save();
-      ctx.globalCompositeOperation = 'screen';
-      ctx.strokeStyle = 'rgba(120,200,255,0.9)';
-      ctx.lineWidth = 2;
-      const arcs = 3 + Math.floor(3*k);
-      const cx=W/2, cy=H/2, rx=Math.min(W,H)*0.28, ry=rx*1.2;
-      for(let a=0;a<arcs;a++){
-        ctx.beginPath();
-        const segs = 12;
-        for(let i=0;i<=segs;i++){
-          const ang = i/segs * Math.PI*2;
-          const jitter = (Math.random()-0.5)*10*k + Math.sin(t*10+i+a)*6*k;
-          const x = cx + Math.cos(ang)*(rx + jitter);
-          const y = cy + Math.sin(ang)*(ry + jitter);
-          if(i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+        // Имитация удаления фона
+        function removeBackground() {
+            if(previewImage.src) {
+                // Визуальный эффект "обработки"
+                previewImage.classList.add('processing');
+                setTimeout(() => {
+                    previewImage.classList.remove('processing');
+                    alert("В реальном приложении здесь нейросеть вырезала бы фон. Сейчас мы просто показали анимацию магии!");
+                    // В реале: отправка картинки на бэкенд, возврат PNG с альфа-каналом
+                }, 1500);
+            }
         }
-        ctx.stroke();
-      }
-      ctx.restore();
-    }
-    function drawNeonOutline(ctx, offCanvas, x, y, w, h, color='rgba(94,139,255,0.9)', blur=18){
-      ctx.save();
-      ctx.globalCompositeOperation = 'screen';
-      ctx.shadowColor = color;
-      ctx.shadowBlur = blur;
-      ctx.drawImage(offCanvas, x, y);
-      ctx.restore();
-    }
-    function drawHologram(ctx, offCanvas, x, y, w, h, t, k){
-      ctx.save();
-      ctx.globalAlpha = 0.85;
-      ctx.filter = 'hue-rotate(200deg) saturate(1.2)';
-      const j = Math.sin(t*6*Math.PI)*2;
-      ctx.globalCompositeOperation = 'lighter';
-      ctx.drawImage(offCanvas, x, y+j);
-      ctx.globalAlpha = 0.35;
-      ctx.drawImage(offCanvas, x+1, y+j+1);
-      ctx.restore();
-      drawScanlines(ctx, w, h, 0.12+0.1*k, 3);
-    }
 
-    // --------- Main draw ---------
-    function drawHeroFrame(t, ctx, W, H, isPreview=false){
-      if(els.transparentBg.checked){
-        ctx.fillStyle = 'rgb(255,0,255)'; 
-        ctx.fillRect(0,0,W,H);
-      }else{
-        ctx.clearRect(0,0,W,H);
-      }
-
-      if(!srcLoaded) return;
-
-      const eff = els.effect.value;
-      const k = parseFloat(els.intensity.value||0.3);
-
-      const iw = srcImage.width, ih = srcImage.height;
-      const baseS = Math.min(W/iw, H/ih);
-      let sx = baseS, sy = baseS, dx=0, dy=0, rot=0;
-
-      if(eff==='breath'){
-        const breath = Math.sin(t*2*Math.PI);
-        sy *= (1 + 0.06*k*breath);
-        sx *= (1 + 0.02*k*breath);
-        dy += (H*0.01*k)*breath;
-      }else if(eff==='run'){
-        const bob = Math.sin(t*2*Math.PI);
-        dy += (H*0.03*k)*(-Math.abs(bob));
-        dx += (W*0.01*k)*Math.sin(t*4*Math.PI);
-        rot += (Math.PI/180) * (2*k) * Math.sin(t*2*Math.PI + Math.PI/4);
-      }else if(eff==='hover'){
-        dy += Math.sin(t*2*Math.PI)*H*0.02*k;
-      }else if(eff==='dash'){
-        dx += Math.sin(t*2*Math.PI)*W*0.02*k;
-      }else if(eff==='earthquake'){
-        dx += (Math.random()*2-1)*W*0.005*k;
-        dy += (Math.random()*2-1)*H*0.006*k;
-        rot += (Math.random()*2-1)*0.01*k;
-      }else if(eff==='shoot'){
-        const n = parseInt(els.shots.value||1,10);
-        let shotActive = false; let local=0;
-        for(let i=0;i<n;i++){
-          const center=(i+0.5)/n, w=0.06, dt=Math.abs(t-center);
-          if(dt<w){shotActive=true; local=1-dt/w; break;}
+        // Имитация применения эффекта
+        function applyEffect() {
+            const effect = document.getElementById('effectSelect').value;
+            if(previewImage.src && effect !== 'Не выбрано') {
+                previewImage.classList.add('processing');
+                setTimeout(() => {
+                    previewImage.classList.remove('processing');
+                    alert(`Применена нейро-анимация: "${effect}". В Genially эта GIF будет проигрываться циклично.`);
+                }, 2000);
+            }
         }
-        if(shotActive){
-          const fp = flashPoint || {x:W*0.75, y:H*0.45};
-          const cx=W/2, cy=H/2;
-          const vx=cx-fp.x, vy=cy-fp.y;
-          const len = Math.max(1, Math.hypot(vx,vy));
-          dx += (vx/len) * (W*0.01*k) * local;
-          dy += (vy/len) * (H*0.01*k) * local;
-          rot += (Math.PI/180) * (2.5*k) * (Math.random()*2-1) * local;
+
+        // Скачивание
+        function downloadGif() {
+            if(!previewImage.src) {
+                alert('Сначала загрузите и заколдуйте картинку!');
+                return;
+            }
+            // Логика автоскачивания (в данном случае скачает исходную картинку для примера)
+            const a = document.createElement('a');
+            a.href = previewImage.src;
+            a.download = 'magic_animation.gif';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            alert("Ваш шедевр сохранен! Теперь его можно загрузить в Genially.");
         }
-      }else if(eff==='hit'){
-        const pulse = 1 - Math.abs(Math.sin(t*Math.PI*2));
-        dx += (Math.random()*2-1)*W*0.004*k*pulse;
-        dy += (Math.random()*2-1)*H*0.004*k*pulse;
-      }
+    </script>
 
-      const off = document.createElement('canvas');
-      const dw = iw*sx, dh = ih*sy;
-      off.width = Math.max(2, Math.ceil(dw));
-      off.height = Math.max(2, Math.ceil(dh));
-      const octx = off.getContext('2d');
-      octx.imageSmoothingEnabled = true;
-      octx.clearRect(0,0,off.width,off.height);
-      octx.save();
-      octx.translate(off.width/2, off.height/2);
-      octx.rotate(rot);
-      octx.drawImage(srcImage, -dw/2, -dh/2, dw, dh);
-      octx.restore();
-
-      if(eff==='hover'){
-        ctx.save();
-        ctx.globalAlpha = 0.35*(0.7+0.3*Math.sin(t*2*Math.PI));
-        ctx.fillStyle = 'rgba(0,0,0,0.6)';
-        const shw = dw*0.5, shh = dh*0.1;
-        ctx.beginPath();
-        ctx.ellipse(W/2 + dx, H/2 + dy + dh*0.55, shw, shh, 0, 0, Math.PI*2);
-        ctx.fill();
-        ctx.restore();
-      }
-
-      if(eff==='run'){
-        const lines = 6;
-        ctx.save();
-        ctx.globalAlpha = 0.18 * (0.6+0.4*Math.sin(t*2*Math.PI));
-        ctx.fillStyle = 'rgba(200,220,255,0.8)';
-        for(let i=0;i<lines;i++){
-          const yy = (H*(i+1)/(lines+1)) + Math.sin(t*2*Math.PI + i)*8;
-          const len = W*0.18;
-          const offx = (t*W*0.3 + i*40) % (W*0.3);
-          ctx.fillRect(W - offx - len, yy, len, 2);
-        }
-        ctx.restore();
-      }
-
-      if(eff==='dash'){
-        ctx.save();
-        ctx.globalAlpha = 0.18 + 0.12*k;
-        const trails = 4 + Math.floor(2*k);
-        for(let i=trails;i>=1;i--){
-          const alpha = (0.12 + 0.1*k) * (1 - i/trails);
-          ctx.globalAlpha = alpha;
-          ctx.drawImage(off, (W/2 - off.width/2) + dx - i*off.width*0.08, (H/2 - off.height/2) + dy);
-        }
-        ctx.restore();
-      }
-
-      ctx.drawImage(off, (W/2 - off.width/2) + dx, (H/2 - off.height/2) + dy);
-
-      const cx = W/2 + dx, cy = H/2 + dy;
-
-      if(eff==='shoot'){
-        const n = parseInt(els.shots.value||1,10);
-        for(let i=0;i<n;i++){
-          const center=(i+0.5)/n, w=0.06, dt=Math.abs(t-center);
-          if(dt < w){
-            const local = 1 - dt/w;
-            const fp = flashPoint || {x:W*0.75, y:H*0.45};
-            const R = Math.max(W,H) * (0.12 + 0.20*local) * (0.5 + k);
-            const g = ctx.createRadialGradient(fp.x, fp.y, 0, fp.x, fp.y, R);
-            g.addColorStop(0, 'rgba(255,255,210,'+(0.9*local)+')');
-            g.addColorStop(0.35, 'rgba(255,230,120,'+(0.6*local)+')');
-            g.addColorStop(1, 'rgba(255,200,0,0)');
-            ctx.save();
-            ctx.globalCompositeOperation = 'screen';
-            ctx.fillStyle = g;
-            ctx.beginPath(); ctx.arc(fp.x, fp.y, R, 0, Math.PI*2); ctx.fill();
-            ctx.restore();
-            break;
-          }
-        }
-      }
-
-      if(eff==='shockwave'){
-        const local = (Math.sin(t*2*Math.PI)*0.5+0.5);
-        drawShockwave(ctx, cx, cy, local, W, H, Math.max(0.2, k));
-      }
-
-      if(eff==='damageFlash'){
-        const flash = Math.max(0, Math.sin(t*2*Math.PI))*0.6*k;
-        ctx.save();
-        ctx.globalCompositeOperation = 'multiply';
-        ctx.fillStyle = 'rgba(255,60,60,'+flash+')';
-        ctx.fillRect(0,0,W,H);
-        ctx.restore();
-      }
-
-      if(eff==='hit'){
-        const pulse = 1 - Math.abs(Math.sin(t*Math.PI*2));
-        if(pulse>0.85){
-          ctx.save();
-          ctx.fillStyle='rgba(255,255,255,'+((pulse-0.85)/0.15*0.5*k)+')';
-          ctx.fillRect(0,0,W,H);
-          ctx.restore();
-        }
-      }
-
-      if(eff==='shield'){
-        ctx.save();
-        ctx.globalCompositeOperation = 'screen';
-        const r = Math.max(dw,dh)*0.62;
-        const g = ctx.createRadialGradient(cx, cy, r*0.75, cx, cy, r);
-        g.addColorStop(0, 'rgba(120,210,255,'+(0.16+0.18*k)+')');
-        g.addColorStop(1, 'rgba(120,210,255,0)');
-        ctx.fillStyle = g;
-        ctx.beginPath(); ctx.arc(cx, cy, r, 0, Math.PI*2); ctx.fill();
-        ctx.lineWidth = 2;
-        ctx.strokeStyle = 'rgba(120,210,255,'+(0.6*(0.5+0.5*Math.sin(t*6*Math.PI))*k)+')';
-        ctx.beginPath(); ctx.arc(cx, cy, r*0.98, 0, Math.PI*2); ctx.stroke();
-        ctx.restore();
-      }
-
-      if(eff==='healRing'){
-        ctx.save();
-        ctx.globalCompositeOperation = 'screen';
-        const y = cy + dh*0.55;
-        const R = Math.max(dw,dh)*0.7;
-        const g = ctx.createRadialGradient(cx, y, 0, cx, y, R);
-        g.addColorStop(0, 'rgba(120,255,170,'+(0.35+0.25*Math.sin(t*2*Math.PI)*k)+')');
-        g.addColorStop(1, 'rgba(120,255,170,0)');
-        ctx.fillStyle = g;
-        ctx.beginPath(); ctx.arc(cx, y, R, 0, Math.PI*2); ctx.fill();
-        ctx.restore();
-      }
-
-      if(eff==='buffAura'){
-        ctx.save();
-        ctx.globalCompositeOperation = 'screen';
-        const g = ctx.createLinearGradient(cx, cy-dh*0.6, cx, cy+dh*0.6);
-        g.addColorStop(0,'rgba(150,210,255,'+(0.08+0.25*k)+')');
-        g.addColorStop(0.5,'rgba(200,120,255,'+(0.12+0.2*k)+')');
-        g.addColorStop(1,'rgba(150,210,255,0)');
-        ctx.fillStyle = g;
-        ctx.fillRect(cx-dw*0.6, cy-dh*0.6, dw*1.2, dh*1.2);
-        ctx.restore();
-      }
-
-      if(eff==='poisonAura'){
-        ctx.save();
-        ctx.globalCompositeOperation = 'screen';
-        for(let i=0;i<18;i++){
-          const a = (i/18 + t*0.2)%1;
-          const px = cx + Math.sin(i*1.7 + t*3)*dw*0.3;
-          const py = cy + (a-0.5)*dh*1.2;
-          const r = 10 + (i%5)*6;
-          const g = ctx.createRadialGradient(px,py,0,px,py,r);
-          g.addColorStop(0,'rgba(120,255,120,'+(0.25+0.25*k)+')');
-          g.addColorStop(1,'rgba(120,255,120,0)');
-          ctx.fillStyle=g;
-          ctx.beginPath(); ctx.arc(px,py,r,0,Math.PI*2); ctx.fill();
-        }
-        ctx.restore();
-      }
-
-      if(eff==='electric'){
-        drawElectric(ctx, W, H, t, k);
-      }
-
-      if(eff==='glowPulse'){
-        drawNeonOutline(ctx, off, (W/2 - off.width/2) + dx, (H/2 - off.height/2) + dy, off.width, off.height,
-          'rgba(94,139,255,'+(0.5+0.4*Math.sin(t*2*Math.PI)*k)+')', 24+18*k);
-      }
-
-      if(eff==='outlineNeon'){
-        ctx.save();
-        ctx.globalCompositeOperation = 'screen';
-        const passes = 4;
-        for(let i=0;i<passes;i++){
-          const ang = i/passes*Math.PI*2;
-          const ox = Math.cos(ang)*2.0;
-          const oy = Math.sin(ang)*2.0;
-          ctx.globalAlpha = 0.35;
-          ctx.filter = 'blur(0.5px)';
-          ctx.drawImage(off, (W/2 - off.width/2) + dx+ox, (H/2 - off.height/2) + dy+oy);
-        }
-        ctx.restore();
-      }
-
-      if(eff==='glitch'){
-        drawGlitch(ctx, off, (W/2 - off.width/2) + dx, (H/2 - off.height/2) + dy, off.width, off.height, t, k);
-      }
-
-      if(eff==='hologram'){
-        drawHologram(ctx, off, (W/2 - off.width/2) + dx, (H/2 - off.height/2) + dy, off.width, off.height, t, k);
-      }
-
-      if(eff==='scanlines'){
-        drawScanlines(ctx, W, H, 0.18*(0.6+0.6*k), 3);
-      }
-
-      if(eff==='pixelate'){
-        drawPixelate(ctx, off, (W/2 - off.width/2) + dx, (H/2 - off.height/2) + dy, off.width, off.height, k);
-      }
-
-      if(eff==='flicker'){
-        const f = 0.85 + 0.15*Math.sin(t*20*Math.PI);
-        ctx.save();
-        ctx.globalCompositeOperation = 'screen';
-        ctx.fillStyle = 'rgba(255,255,255,'+(0.08*k*f)+')';
-        ctx.fillRect(0,0,W,H);
-        ctx.restore();
-      }
-
-      if(eff==='warp'){
-        const stripe = Math.max(4, Math.floor(off.width/24));
-        for(let x=0; x<off.width; x+=stripe){
-          const band = stripe;
-          const offset = Math.sin((x/off.width)*Math.PI*4 + t*6)*8*k;
-          ctx.drawImage(off, x, 0, band, off.height, (W/2 - off.width/2) + dx + x + offset, (H/2 - off.height/2) + dy, band, off.height);
-        }
-      }
-
-      if(eff==='rain'){ drawRain(ctx, W, H, t, k); }
-      if(eff==='snow'){ drawSnow(ctx, W, H, t, k); }
-      if(eff==='smoke'){ drawSmoke(ctx, W, H, t, k); }
-      if(eff==='fire'){ drawFire(ctx, W, H, t, k); }
-
-      if(els.enableChroma.checked){
-        applyChromaOnCanvas(ctx, W, H, hexToRgb(els.chromaColor.value), parseInt(els.tolerance.value,10), parseInt(els.softness.value,10));
-        if(els.transparentBg.checked){
-          const img = ctx.getImageData(0,0,W,H);
-          const d = img.data;
-          for(let i=0;i<d.length;i+=4){
-            if(d[i+3]===0){ d[i]=MAGENTA.r; d[i+1]=MAGENTA.g; d[i+2]=MAGENTA.b; d[i+3]=255; }
-          }
-          ctx.putImageData(img,0,0);
-        }
-      }
-
-      if(isPreview && els.effect.value==='shoot' && flashPoint){
-        ctx.save();
-        ctx.strokeStyle = 'rgba(46,242,255,0.9)';
-        ctx.lineWidth = 2;
-        ctx.beginPath();
-        ctx.moveTo(flashPoint.x-8, flashPoint.y); ctx.lineTo(flashPoint.x+8, flashPoint.y);
-        ctx.moveTo(flashPoint.x, flashPoint.y-8); ctx.lineTo(flashPoint.x, flashPoint.y+8);
-        ctx.stroke();
-        ctx.restore();
-      }
-    }
-
-    function drawPreview(tNorm){
-      if(!srcLoaded){
-        ctx.clearRect(0,0,els.stage.width, els.stage.height);
-        return;
-      }
-      const W = parseInt(els.outW.value,10);
-      const H = parseInt(els.outH.value,10);
-      if(els.stage.width!==W || els.stage.height!==H){
-        els.stage.width = W; els.stage.height = H;
-      }
-      drawHeroFrame(tNorm, ctx, W, H, true);
-    }
-
-    let rafId;
-    function loopPreview(){
-      let start = performance.now();
-      function step(ts){
-        const dur = parseFloat(els.duration.value||2);
-        const p = ((ts-start)/1000) % dur;
-        drawPreview(p/dur);
-        rafId = requestAnimationFrame(step);
-      }
-      cancelAnimationFrame(rafId);
-      rafId = requestAnimationFrame(step);
-    }
-    loopPreview();
-
-    // --------- GIF generation ---------
-    els.btnGenerate.addEventListener('click', generateGIF);
-    els.btnCancel.addEventListener('click', ()=>{ cancelFlag = true; });
-    els.btnDownload.addEventListener('click', ()=>{
-      if(lastBlob){ saveBlob(lastBlob, `hero-${els.effect.value}-${Date.now()}.gif`); }
-    });
-
-    async function generateGIF(){
-      if(!srcLoaded){ setStatus('Сначала загрузите изображение', 'err'); return; }
-      cancelFlag = false;
-      els.btnCancel.disabled = false;
-      els.btnDownload.disabled = true;
-      setStatus('Генерация…', '');
-
-      const W = parseInt(els.outW.value,10);
-      const H = parseInt(els.outH.value,10);
-      if(W>7680 || H>4320) warn8kIfNeeded(W,H);
-
-      const dur = parseFloat(els.duration.value||2);
-      const fps = clamp(parseInt(els.fps.value||16,10),1,60);
-      const totalFrames = Math.max(1, Math.round(dur * fps));
-
-      const gif = new GIF({
-        workers: 2,
-        quality: 10, 
-        width: W,
-        height: H,
-        repeat: els.loop.checked ? 0 : -1,
-        // --- Используем сгенерированный blob url вместо прямой ссылки с CDN ---
-        workerScript: gifWorkerUrl,
-        transparent: els.transparentBg.checked ? (MAGENTA.r<<16 | MAGENTA.g<<8 | MAGENTA.b) : null,
-      });
-
-      const off = document.createElement('canvas');
-      off.width = W; off.height = H;
-      const octx = off.getContext('2d');
-
-      for(let f=0; f<totalFrames; f++){
-        if(cancelFlag){ setStatus('Отменено', 'err'); els.btnCancel.disabled=true; return; }
-        const t = totalFrames<=1 ? 0 : f/(totalFrames-1);
-        drawHeroFrame(t, octx, W, H, false);
-        gif.addFrame(off, {delay: Math.round(1000/fps), copy:true, dispose: 2});
-        setStatus(`Генерация… кадр ${f+1}/${totalFrames}`);
-        await new Promise(r=>setTimeout(r,0));
-      }
-
-      const blobPromise = new Promise((resolve)=> {
-        gif.on('finished', resolve);
-        gif.render();
-      });
-
-      const resultBlob = await blobPromise;
-      lastBlob = resultBlob;
-      els.btnDownload.disabled = false;
-      els.btnCancel.disabled = true;
-
-      const name = `hero-${els.effect.value}-${Date.now()}.gif`;
-      saveBlob(lastBlob, name);
-      setStatus('Готово ✓ Файл скачан. Можно скачать ещё раз кнопкой «Скачать GIF».', 'ok');
-    }
-
-    ['change','input'].forEach(ev=>{
-      document.addEventListener(ev, (e)=>{
-        if(e.target && (e.target.matches('#effect,#intensity,#duration,#fps,#outW,#outH,#transparentBg,#enableChroma,#chromaColor,#tolerance,#softness,#shots'))){
-          drawPreview(0);
-        }
-      }, true);
-    });
-  </script>
 </body>
 </html>
