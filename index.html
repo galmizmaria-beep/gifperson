@@ -94,7 +94,6 @@
         </div>
       </div>
       <div class="cta">
-        <!-- Убрали "Загрузить демо" -->
         <button class="btn ghost" id="btnDownload" disabled>Скачать GIF</button>
       </div>
     </div>
@@ -255,15 +254,12 @@
             </div>
           </div>
 
-          <!-- Убраны кнопки ограничения размера и автосжатия -->
-
           <div class="row right">
             <button class="btn" id="btnGenerate">Сгенерировать GIF</button>
             <button class="btn ghost" id="btnCancel" disabled>Отмена</button>
           </div>
           <div class="row">
             <span id="status" class="note">Готов к работе</span>
-            <!-- Убрали "Размер: —" -->
           </div>
         </div>
       </div>
@@ -325,10 +321,21 @@
     let srcLoaded = false;
     let aspect = 1;
     let cancelFlag = false;
-    const MAGENTA = {r:255,g:0,b:255}; // цвет под прозрачность GIF
+    const MAGENTA = {r:255,g:0,b:255}; 
     let pickFlashMode = false;
-    let flashPoint = null; // {x,y} в координатах канвы
+    let flashPoint = null; 
     let lastBlob = null;
+
+    // --- ФИКС CORS ДЛЯ WEB WORKER ---
+    let gifWorkerUrl = 'https://cdnjs.cloudflare.com/ajax/libs/gif.js/0.2.0/gif.worker.js';
+    fetch(gifWorkerUrl)
+      .then(res => res.text())
+      .then(text => {
+        const blob = new Blob([text], { type: 'application/javascript' });
+        gifWorkerUrl = URL.createObjectURL(blob); // Создаем локальную ссылку для воркера
+      })
+      .catch(console.error);
+    // --------------------------------
 
     // --------- Helpers ---------
     function hexToRgb(hex){
@@ -356,7 +363,7 @@
     function fitOutputToAspect(){
       if(!els.lockAspect.checked || !aspect) return;
       const w = parseInt(els.outW.value||0,10);
-      els.outH.value = Math.round(w / (1/aspect)); // aspect = w/h
+      els.outH.value = Math.round(w / (1/aspect));
     }
     function warn8kIfNeeded(w,h){
       const over8k = w>7680 || h>4320 || (w>=7000 || h>=4000);
@@ -427,14 +434,12 @@
     });
     els.shots.addEventListener('input', ()=> els.shotsVal.textContent = els.shots.value);
 
-    // Режим выбора точки вспышки
     els.btnPickFlash?.addEventListener('click', ()=>{
       pickFlashMode = !pickFlashMode;
       els.btnPickFlash.textContent = pickFlashMode ? 'Нажмите по предпросмотру…' : 'Указать точку вспышки';
       els.btnPickFlash.classList.toggle('secondary', pickFlashMode);
     });
 
-    // Клик по канве: пипетка или выбор точки вспышки
     els.stage.addEventListener('click', (e)=>{
       const rect = els.stage.getBoundingClientRect();
       const x = Math.floor((e.clientX - rect.left) * (els.stage.width/rect.width));
@@ -495,7 +500,6 @@
       ctx.restore();
     }
     function drawGlitch(ctx, offCanvas, x, y, w, h, t, k){
-      // RGB сдвиг
       const offCtx = offCanvas.getContext('2d');
       const shift = 6 + 18*k*Math.sin(t*12*Math.PI);
       ctx.save();
@@ -509,7 +513,6 @@
       ctx.drawImage(offCanvas, x+shift, y);
       ctx.restore();
 
-      // Горизонтальные срезы
       const slices = 8;
       for(let i=0;i<slices;i++){
         const sy = Math.floor(h*(i+Math.random()*0.2)/slices);
@@ -635,9 +638,8 @@
 
     // --------- Main draw ---------
     function drawHeroFrame(t, ctx, W, H, isPreview=false){
-      // Фон
       if(els.transparentBg.checked){
-        ctx.fillStyle = 'rgb(255,0,255)'; // магента как прозрачный индекс
+        ctx.fillStyle = 'rgb(255,0,255)'; 
         ctx.fillRect(0,0,W,H);
       }else{
         ctx.clearRect(0,0,W,H);
@@ -652,7 +654,6 @@
       const baseS = Math.min(W/iw, H/ih);
       let sx = baseS, sy = baseS, dx=0, dy=0, rot=0;
 
-      // Камера/движение
       if(eff==='breath'){
         const breath = Math.sin(t*2*Math.PI);
         sy *= (1 + 0.06*k*breath);
@@ -693,7 +694,6 @@
         dy += (Math.random()*2-1)*H*0.004*k*pulse;
       }
 
-      // Подготовим оффскрин спрайт героя для пост-эффектов
       const off = document.createElement('canvas');
       const dw = iw*sx, dh = ih*sy;
       off.width = Math.max(2, Math.ceil(dw));
@@ -707,7 +707,6 @@
       octx.drawImage(srcImage, -dw/2, -dh/2, dw, dh);
       octx.restore();
 
-      // Тени/подложки для отдельных эффектов (hover)
       if(eff==='hover'){
         ctx.save();
         ctx.globalAlpha = 0.35*(0.7+0.3*Math.sin(t*2*Math.PI));
@@ -719,7 +718,6 @@
         ctx.restore();
       }
 
-      // Отрисуем основные линии скорости для «Бега»
       if(eff==='run'){
         const lines = 6;
         ctx.save();
@@ -734,7 +732,6 @@
         ctx.restore();
       }
 
-      // Послеследы для «Рывок»
       if(eff==='dash'){
         ctx.save();
         ctx.globalAlpha = 0.18 + 0.12*k;
@@ -747,13 +744,10 @@
         ctx.restore();
       }
 
-      // Основной спрайт
       ctx.drawImage(off, (W/2 - off.width/2) + dx, (H/2 - off.height/2) + dy);
 
-      // Эффекты поверх героя
       const cx = W/2 + dx, cy = H/2 + dy;
 
-      // Вспышка для «Выстрела»
       if(eff==='shoot'){
         const n = parseInt(els.shots.value||1,10);
         for(let i=0;i<n;i++){
@@ -907,7 +901,6 @@
       }
 
       if(eff==='warp'){
-        // Искажение вертикальными полосами
         const stripe = Math.max(4, Math.floor(off.width/24));
         for(let x=0; x<off.width; x+=stripe){
           const band = stripe;
@@ -921,11 +914,9 @@
       if(eff==='smoke'){ drawSmoke(ctx, W, H, t, k); }
       if(eff==='fire'){ drawFire(ctx, W, H, t, k); }
 
-      // Хромакей
       if(els.enableChroma.checked){
         applyChromaOnCanvas(ctx, W, H, hexToRgb(els.chromaColor.value), parseInt(els.tolerance.value,10), parseInt(els.softness.value,10));
         if(els.transparentBg.checked){
-          // Подложим магенту туда, где альфа 0 (для индекса прозрачности GIF)
           const img = ctx.getImageData(0,0,W,H);
           const d = img.data;
           for(let i=0;i<d.length;i+=4){
@@ -935,7 +926,6 @@
         }
       }
 
-      // Маркер точки вспышки (предпросмотр)
       if(isPreview && els.effect.value==='shoot' && flashPoint){
         ctx.save();
         ctx.strokeStyle = 'rgba(46,242,255,0.9)';
@@ -961,7 +951,6 @@
       drawHeroFrame(tNorm, ctx, W, H, true);
     }
 
-    // Плавный предпросмотр
     let rafId;
     function loopPreview(){
       let start = performance.now();
@@ -1000,11 +989,12 @@
 
       const gif = new GIF({
         workers: 2,
-        quality: 10, // 1..30 (меньше — лучше качество)
+        quality: 10, 
         width: W,
         height: H,
         repeat: els.loop.checked ? 0 : -1,
-        workerScript: 'https://cdnjs.cloudflare.com/ajax/libs/gif.js/0.2.0/gif.worker.js',
+        // --- Используем сгенерированный blob url вместо прямой ссылки с CDN ---
+        workerScript: gifWorkerUrl,
         transparent: els.transparentBg.checked ? (MAGENTA.r<<16 | MAGENTA.g<<8 | MAGENTA.b) : null,
       });
 
@@ -1031,13 +1021,11 @@
       els.btnDownload.disabled = false;
       els.btnCancel.disabled = true;
 
-      // Автоскачивание + кнопка скачивания
       const name = `hero-${els.effect.value}-${Date.now()}.gif`;
       saveBlob(lastBlob, name);
       setStatus('Готово ✓ Файл скачан. Можно скачать ещё раз кнопкой «Скачать GIF».', 'ok');
     }
 
-    // Обновление предпросмотра при смене параметров
     ['change','input'].forEach(ev=>{
       document.addEventListener(ev, (e)=>{
         if(e.target && (e.target.matches('#effect,#intensity,#duration,#fps,#outW,#outH,#transparentBg,#enableChroma,#chromaColor,#tolerance,#softness,#shots'))){
