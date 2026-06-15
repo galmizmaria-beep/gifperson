@@ -90,11 +90,12 @@
         <div class="logo"></div>
         <div>
           <b>Neon GIF Constructor</b><br>
-          <span class="small" style="color:#9bb0ff">Загрузка • Оживление героя • Прозрачность • Сжатие • Автоскачивание</span>
+          <span class="small" style="color:#9bb0ff">Загрузка • Оживление героя • Прозрачность • Экспорт • Скачать GIF</span>
         </div>
       </div>
       <div class="cta">
-        <button class="btn ghost" id="btnSample">Загрузить демо</button>
+        <!-- Убрали "Загрузить демо" -->
+        <button class="btn ghost" id="btnDownload" disabled>Скачать GIF</button>
       </div>
     </div>
 
@@ -103,7 +104,7 @@
       <div class="panel">
         <span class="badge">Настройки</span>
         <h1>Оживите героя</h1>
-        <p>Загрузите изображение, выберите тип оживления (дыхание, бег, выстрел) и сгенерируйте GIF. Файл скачается автоматически.</p>
+        <p>Загрузите изображение, выберите эффект и сгенерируйте GIF. Можно скачать кнопкой «Скачать GIF».</p>
 
         <div class="section">
           <h2>1) Источник</h2>
@@ -157,15 +158,46 @@
         <div class="hr"></div>
 
         <div class="section">
-          <h2>3) Оживление героя</h2>
+          <h2>3) Эффект</h2>
           <div class="row">
-            <div style="flex:1">
-              <label for="effect">Тип</label>
+            <div style="flex:1 1 100%">
+              <label for="effect">Тип эффекта</label>
               <select id="effect">
                 <option value="none">Без эффекта</option>
-                <option value="breath">Дыхание</option>
-                <option value="run">Бег</option>
-                <option value="shoot">Выстрел</option>
+                <optgroup label="Движение героя">
+                  <option value="breath">Дыхание</option>
+                  <option value="run">Бег</option>
+                  <option value="hover">Парение</option>
+                  <option value="dash">Рывок (послеобразы)</option>
+                  <option value="earthquake">Землетрясение (тряска камеры)</option>
+                </optgroup>
+                <optgroup label="Боевые / ударные">
+                  <option value="shoot">Выстрел (вспышка + отдача)</option>
+                  <option value="hit">Удар (встряска + белый фрейм)</option>
+                  <option value="shockwave">Ударная волна</option>
+                  <option value="damageFlash">Повреждение (красный флэш)</option>
+                </optgroup>
+                <optgroup label="Ауры / баффы / дебаффы">
+                  <option value="shield">Энергетический щит</option>
+                  <option value="healRing">Лечащее кольцо</option>
+                  <option value="buffAura">Аура баффа</option>
+                  <option value="poisonAura">Ядовитая аура</option>
+                  <option value="electric">Электрические дуги</option>
+                </optgroup>
+                <optgroup label="VFX / стилизация">
+                  <option value="glowPulse">Неоновый пульс</option>
+                  <option value="outlineNeon">Неоновый контур</option>
+                  <option value="glitch">Глитч (RGB-сдвиг)</option>
+                  <option value="hologram">Голограмма</option>
+                  <option value="scanlines">Скан-линии</option>
+                  <option value="pixelate">Пикселизация</option>
+                  <option value="flicker">Мерцание</option>
+                  <option value="warp">Варп (полосы-искажения)</option>
+                  <option value="rain">Дождь</option>
+                  <option value="snow">Снег</option>
+                  <option value="smoke">Дым</option>
+                  <option value="fire">Огонь</option>
+                </optgroup>
               </select>
             </div>
             <div style="flex:1">
@@ -197,7 +229,7 @@
               <label for="loop">Зациклить</label>
             </div>
           </div>
-          <div class="sub muted">Подсказка: «Дыхание» — мягкая пульсация по Y; «Бег» — подпрыгивание + лёгкое покачивание и линии скорости; «Выстрел» — вспышка в выбранной точке и отдача.</div>
+          <div class="sub muted">Подсказка: много эффектов можно комбинировать с хромакеем/прозрачностью для UI/спрайтов.</div>
         </div>
 
         <div class="hr"></div>
@@ -223,24 +255,7 @@
             </div>
           </div>
 
-          <div class="row">
-            <div class="switch">
-              <input type="radio" name="target" id="tNone" value="none" checked>
-              <label for="tNone">Без ограничения</label>
-            </div>
-            <div class="switch">
-              <input type="radio" name="target" id="t10" value="10">
-              <label for="t10">До 10 МБ</label>
-            </div>
-            <div class="switch">
-              <input type="radio" name="target" id="t5" value="5">
-              <label for="t5">До 5 МБ</label>
-            </div>
-            <div class="switch">
-              <input type="checkbox" id="autoCompress" checked>
-              <label for="autoCompress">Автосжатие до цели</label>
-            </div>
-          </div>
+          <!-- Убраны кнопки ограничения размера и автосжатия -->
 
           <div class="row right">
             <button class="btn" id="btnGenerate">Сгенерировать GIF</button>
@@ -248,7 +263,7 @@
           </div>
           <div class="row">
             <span id="status" class="note">Готов к работе</span>
-            <span class="pill" id="sizeInfo">Размер: —</span>
+            <!-- Убрали "Размер: —" -->
           </div>
         </div>
       </div>
@@ -293,21 +308,16 @@
       tolVal: document.getElementById('tolVal'),
       softness: document.getElementById('softness'),
       softVal: document.getElementById('softVal'),
-      targetNone: document.getElementById('tNone'),
-      target10: document.getElementById('t10'),
-      target5: document.getElementById('t5'),
-      autoCompress: document.getElementById('autoCompress'),
       btnGenerate: document.getElementById('btnGenerate'),
       btnCancel: document.getElementById('btnCancel'),
       status: document.getElementById('status'),
-      sizeInfo: document.getElementById('sizeInfo'),
       loop: document.getElementById('loop'),
-      btnSample: document.getElementById('btnSample'),
       shootRow: document.getElementById('shootRow'),
       btnPickFlash: document.getElementById('btnPickFlash'),
       flashInfo: document.getElementById('flashInfo'),
       shots: document.getElementById('shots'),
       shotsVal: document.getElementById('shotsVal'),
+      btnDownload: document.getElementById('btnDownload'),
     };
 
     const ctx = els.stage.getContext('2d');
@@ -315,9 +325,10 @@
     let srcLoaded = false;
     let aspect = 1;
     let cancelFlag = false;
-    const MAGENTA = {r:255,g:0,b:255}; // цвет для прозрачного индекса GIF
+    const MAGENTA = {r:255,g:0,b:255}; // цвет под прозрачность GIF
     let pickFlashMode = false;
     let flashPoint = null; // {x,y} в координатах канвы
+    let lastBlob = null;
 
     // --------- Helpers ---------
     function hexToRgb(hex){
@@ -332,22 +343,9 @@
       const dr=c1.r-c2.r, dg=c1.g-c2.g, db=c1.b-c2.b;
       return Math.sqrt(dr*dr+dg*dg+db*db);
     }
-    function humanSize(bytes){
-      if(!bytes && bytes!==0) return '—';
-      const u=['Б','КБ','МБ','ГБ']; let i=0; let n=bytes;
-      while(n>=1024 && i<u.length-1){n/=1024;i++;}
-      return n.toFixed(2)+' '+u[i];
-    }
     function setStatus(msg, cls=''){
       els.status.className = 'note ' + (cls||'');
       els.status.textContent = msg;
-    }
-    function setSizeInfo(blob){
-      if(!blob){els.sizeInfo.textContent='Размер: —'; els.sizeInfo.className='pill'; return;}
-      els.sizeInfo.textContent='Размер: ' + humanSize(blob.size);
-      if(blob.size > 10*1024*1024) els.sizeInfo.className='pill err';
-      else if(blob.size > 5*1024*1024) els.sizeInfo.className='pill warn';
-      else els.sizeInfo.className='pill ok';
     }
     function withCORS(url){
       const img = new Image();
@@ -363,10 +361,10 @@
     function warn8kIfNeeded(w,h){
       const over8k = w>7680 || h>4320 || (w>=7000 || h>=4000);
       if(els.warn8k.checked && over8k){
-        alert('Внимание: 8K GIF крайне тяжело генерировать в браузере и почти невозможно уложить в 5–10 МБ. Рекомендуется уменьшить размер или FPS.');
+        alert('Внимание: 8K GIF крайне тяжело генерировать в браузере и почти невозможно уложить в небольшой размер. Рекомендуется уменьшить размер или FPS.');
       }
     }
-    function autoDownload(blob, name='result.gif'){
+    function saveBlob(blob, name='result.gif'){
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
@@ -374,9 +372,6 @@
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);
-      // покажем размер
-      setSizeInfo(blob);
-      // освободим позже
       setTimeout(()=>URL.revokeObjectURL(url), 60000);
     }
 
@@ -391,9 +386,6 @@
     els.loadUrl.addEventListener('click', async ()=>{
       if(!els.url.value) return;
       await loadSource(els.url.value, true);
-    });
-    els.btnSample.addEventListener('click', async ()=>{
-      await loadSource('https://images.unsplash.com/photo-1542751371-adc38448a05e?q=80&w=1200&auto=format&fit=crop', true);
     });
 
     async function loadSource(url, cors=false){
@@ -436,7 +428,7 @@
     els.shots.addEventListener('input', ()=> els.shotsVal.textContent = els.shots.value);
 
     // Режим выбора точки вспышки
-    els.btnPickFlash.addEventListener('click', ()=>{
+    els.btnPickFlash?.addEventListener('click', ()=>{
       pickFlashMode = !pickFlashMode;
       els.btnPickFlash.textContent = pickFlashMode ? 'Нажмите по предпросмотру…' : 'Указать точку вспышки';
       els.btnPickFlash.classList.toggle('secondary', pickFlashMode);
@@ -465,7 +457,7 @@
       }
     });
 
-    // --------- Drawing ---------
+    // --------- Drawing helpers ---------
     function applyChromaOnCanvas(ctx, W, H, key, tol, soft){
       const img = ctx.getImageData(0,0,W,H);
       const d = img.data;
@@ -481,16 +473,177 @@
       }
       ctx.putImageData(img,0,0);
     }
+    function drawScanlines(ctx, W, H, a=0.15, gap=3){
+      ctx.save();
+      ctx.globalAlpha = a;
+      ctx.fillStyle = 'rgba(180,200,255,0.9)';
+      for(let y=0;y<H;y+=gap){
+        ctx.fillRect(0,y, W, 1);
+      }
+      ctx.restore();
+    }
+    function drawShockwave(ctx, cx, cy, t, W, H, k){
+      const r = Math.max(W,H) * (0.05 + 0.45*t);
+      const g = ctx.createRadialGradient(cx, cy, r*0.8, cx, cy, r);
+      g.addColorStop(0, 'rgba(255,255,255,'+(0.25*(1-t)*k+0.05)+')');
+      g.addColorStop(1, 'rgba(255,255,255,0)');
+      ctx.save();
+      ctx.globalCompositeOperation = 'screen';
+      ctx.strokeStyle = g;
+      ctx.lineWidth = Math.max(2, 10*(1-t));
+      ctx.beginPath(); ctx.arc(cx, cy, r, 0, Math.PI*2); ctx.stroke();
+      ctx.restore();
+    }
+    function drawGlitch(ctx, offCanvas, x, y, w, h, t, k){
+      // RGB сдвиг
+      const offCtx = offCanvas.getContext('2d');
+      const shift = 6 + 18*k*Math.sin(t*12*Math.PI);
+      ctx.save();
+      ctx.globalCompositeOperation = 'lighter';
+      ctx.globalAlpha = 0.6;
+      ctx.drawImage(offCanvas, x, y);
+      ctx.globalAlpha = 0.35;
+      ctx.filter = 'hue-rotate(330deg)';
+      ctx.drawImage(offCanvas, x-shift, y);
+      ctx.filter = 'hue-rotate(180deg)';
+      ctx.drawImage(offCanvas, x+shift, y);
+      ctx.restore();
 
+      // Горизонтальные срезы
+      const slices = 8;
+      for(let i=0;i<slices;i++){
+        const sy = Math.floor(h*(i+Math.random()*0.2)/slices);
+        const sh = Math.max(2, Math.floor(h/slices*0.6));
+        const dx = ((Math.random()*2-1)*20)*k;
+        ctx.drawImage(offCanvas, x, y+sy, w, sh, x+dx, y+sy, w, sh);
+      }
+    }
+    function drawPixelate(ctx, offCanvas, x, y, w, h, k){
+      const s = clamp(Math.floor(12 + 48*k), 6, 96);
+      const tmp = document.createElement('canvas');
+      tmp.width = Math.max(2, Math.floor(w/s));
+      tmp.height = Math.max(2, Math.floor(h/s));
+      const tctx = tmp.getContext('2d');
+      tctx.imageSmoothingEnabled = false;
+      tctx.drawImage(offCanvas, 0, 0, tmp.width, tmp.height);
+      ctx.save();
+      ctx.imageSmoothingEnabled = false;
+      ctx.drawImage(tmp, x, y, w, h);
+      ctx.restore();
+    }
+    function drawRain(ctx, W, H, t, k){
+      ctx.save();
+      ctx.strokeStyle = 'rgba(200,220,255,0.6)';
+      ctx.lineWidth = 1;
+      const count = Math.floor(120 * (0.4+0.6*k));
+      const speed = 280 * (0.6+0.8*k);
+      for(let i=0;i<count;i++){
+        const rx = (i*97)%W;
+        const ry = (i*53 + (t*speed)) % (H+40) - 40;
+        ctx.beginPath();
+        ctx.moveTo(rx, ry);
+        ctx.lineTo(rx-8, ry+18);
+        ctx.stroke();
+      }
+      ctx.restore();
+    }
+    function drawSnow(ctx, W, H, t, k){
+      ctx.save();
+      const count = Math.floor(140*(0.4+0.6*k));
+      ctx.fillStyle = 'rgba(255,255,255,0.85)';
+      for(let i=0;i<count;i++){
+        const sx = (i*73 + Math.sin(i+ t*0.7)*30) % W;
+        const sy = (i*41 + t*60*(0.5+0.8*k)) % (H+10) - 10;
+        const r = 1 + (i%3)*0.6;
+        ctx.beginPath(); ctx.arc(sx, sy, r, 0, Math.PI*2); ctx.fill();
+      }
+      ctx.restore();
+    }
+    function drawSmoke(ctx, W, H, t, k){
+      ctx.save();
+      ctx.globalCompositeOperation = 'lighter';
+      const p = 24 + Math.floor(32*k);
+      for(let i=0;i<p;i++){
+        const baseX = W*0.5 + Math.sin(i*1.7 + t*1.2)*60;
+        const y = H*0.8 - (t*H*0.2 + i*14)%(H*0.9);
+        const r = 18 + (i%5)*6;
+        const g = ctx.createRadialGradient(baseX, y, 0, baseX, y, r);
+        g.addColorStop(0, 'rgba(180,190,210,0.08)');
+        g.addColorStop(1, 'rgba(180,190,210,0)');
+        ctx.fillStyle = g;
+        ctx.beginPath(); ctx.arc(baseX, y, r, 0, Math.PI*2); ctx.fill();
+      }
+      ctx.restore();
+    }
+    function drawFire(ctx, W, H, t, k){
+      ctx.save();
+      ctx.globalCompositeOperation = 'screen';
+      const p = 28 + Math.floor(32*k);
+      for(let i=0;i<p;i++){
+        const x = W*0.5 + Math.sin(i*2.3 + t*6)*20;
+        const y = H*0.9 - ((i*20 + t*180) % (H*0.5));
+        const r = 10 + (i%7)*3;
+        const g = ctx.createRadialGradient(x,y,0,x,y,r);
+        g.addColorStop(0,'rgba(255,200,80,0.45)');
+        g.addColorStop(1,'rgba(255,120,0,0)');
+        ctx.fillStyle = g;
+        ctx.beginPath(); ctx.arc(x,y,r,0,Math.PI*2); ctx.fill();
+      }
+      ctx.restore();
+    }
+    function drawElectric(ctx, W, H, t, k){
+      ctx.save();
+      ctx.globalCompositeOperation = 'screen';
+      ctx.strokeStyle = 'rgba(120,200,255,0.9)';
+      ctx.lineWidth = 2;
+      const arcs = 3 + Math.floor(3*k);
+      const cx=W/2, cy=H/2, rx=Math.min(W,H)*0.28, ry=rx*1.2;
+      for(let a=0;a<arcs;a++){
+        ctx.beginPath();
+        const segs = 12;
+        for(let i=0;i<=segs;i++){
+          const ang = i/segs * Math.PI*2;
+          const jitter = (Math.random()-0.5)*10*k + Math.sin(t*10+i+a)*6*k;
+          const x = cx + Math.cos(ang)*(rx + jitter);
+          const y = cy + Math.sin(ang)*(ry + jitter);
+          if(i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+        }
+        ctx.stroke();
+      }
+      ctx.restore();
+    }
+    function drawNeonOutline(ctx, offCanvas, x, y, w, h, color='rgba(94,139,255,0.9)', blur=18){
+      ctx.save();
+      ctx.globalCompositeOperation = 'screen';
+      ctx.shadowColor = color;
+      ctx.shadowBlur = blur;
+      ctx.drawImage(offCanvas, x, y);
+      ctx.restore();
+    }
+    function drawHologram(ctx, offCanvas, x, y, w, h, t, k){
+      ctx.save();
+      ctx.globalAlpha = 0.85;
+      ctx.filter = 'hue-rotate(200deg) saturate(1.2)';
+      const j = Math.sin(t*6*Math.PI)*2;
+      ctx.globalCompositeOperation = 'lighter';
+      ctx.drawImage(offCanvas, x, y+j);
+      ctx.globalAlpha = 0.35;
+      ctx.drawImage(offCanvas, x+1, y+j+1);
+      ctx.restore();
+      drawScanlines(ctx, w, h, 0.12+0.1*k, 3);
+    }
+
+    // --------- Main draw ---------
     function drawHeroFrame(t, ctx, W, H, isPreview=false){
-      // t: 0..1 фаза цикла
       // Фон
       if(els.transparentBg.checked){
-        ctx.fillStyle = 'rgb(255,0,255)'; // магента
+        ctx.fillStyle = 'rgb(255,0,255)'; // магента как прозрачный индекс
         ctx.fillRect(0,0,W,H);
       }else{
         ctx.clearRect(0,0,W,H);
       }
+
+      if(!srcLoaded) return;
 
       const eff = els.effect.value;
       const k = parseFloat(els.intensity.value||0.3);
@@ -499,52 +652,74 @@
       const baseS = Math.min(W/iw, H/ih);
       let sx = baseS, sy = baseS, dx=0, dy=0, rot=0;
 
-      // Эффекты оживления
+      // Камера/движение
       if(eff==='breath'){
-        const breath = Math.sin(t*2*Math.PI); // -1..1
+        const breath = Math.sin(t*2*Math.PI);
         sy *= (1 + 0.06*k*breath);
         sx *= (1 + 0.02*k*breath);
         dy += (H*0.01*k)*breath;
       }else if(eff==='run'){
-        const bob = Math.sin(t*2*Math.PI); // подпрыгивание
-        dy += (H*0.03*k)*(-Math.abs(bob)); // вниз на фазе приземления
-        dx += (W*0.01*k)*Math.sin(t*4*Math.PI); // лёгкое покачивание
+        const bob = Math.sin(t*2*Math.PI);
+        dy += (H*0.03*k)*(-Math.abs(bob));
+        dx += (W*0.01*k)*Math.sin(t*4*Math.PI);
         rot += (Math.PI/180) * (2*k) * Math.sin(t*2*Math.PI + Math.PI/4);
+      }else if(eff==='hover'){
+        dy += Math.sin(t*2*Math.PI)*H*0.02*k;
+      }else if(eff==='dash'){
+        dx += Math.sin(t*2*Math.PI)*W*0.02*k;
+      }else if(eff==='earthquake'){
+        dx += (Math.random()*2-1)*W*0.005*k;
+        dy += (Math.random()*2-1)*H*0.006*k;
+        rot += (Math.random()*2-1)*0.01*k;
       }else if(eff==='shoot'){
-        // одна или несколько вспышек за цикл
         const n = parseInt(els.shots.value||1,10);
-        let shotActive = false;
-        let local = 0;
+        let shotActive = false; let local=0;
         for(let i=0;i<n;i++){
-          const center = (i+0.5)/n; // равномерно по циклу
-          const w = 0.06; // ширина окна вспышки (в долях цикла)
-          const dt = Math.abs(t-center);
-          if(dt < w){
-            shotActive = true;
-            local = 1 - dt/w; // 0..1
-            break;
-          }
+          const center=(i+0.5)/n, w=0.06, dt=Math.abs(t-center);
+          if(dt<w){shotActive=true; local=1-dt/w; break;}
         }
         if(shotActive){
-          // отдача
           const fp = flashPoint || {x:W*0.75, y:H*0.45};
-          const cx = W/2, cy = H/2;
-          const vx = cx - fp.x, vy = cy - fp.y; // направление отдачи
+          const cx=W/2, cy=H/2;
+          const vx=cx-fp.x, vy=cy-fp.y;
           const len = Math.max(1, Math.hypot(vx,vy));
           dx += (vx/len) * (W*0.01*k) * local;
           dy += (vy/len) * (H*0.01*k) * local;
-          rot += (Math.PI/180) * (2.5*k) * (Math.random()*2-1) * local; // лёгкий тряск
+          rot += (Math.PI/180) * (2.5*k) * (Math.random()*2-1) * local;
         }
+      }else if(eff==='hit'){
+        const pulse = 1 - Math.abs(Math.sin(t*Math.PI*2));
+        dx += (Math.random()*2-1)*W*0.004*k*pulse;
+        dy += (Math.random()*2-1)*H*0.004*k*pulse;
       }
 
+      // Подготовим оффскрин спрайт героя для пост-эффектов
+      const off = document.createElement('canvas');
       const dw = iw*sx, dh = ih*sy;
-      ctx.save();
-      ctx.translate(W/2 + dx, H/2 + dy);
-      ctx.rotate(rot);
-      ctx.drawImage(srcImage, -dw/2, -dh/2, dw, dh);
-      ctx.restore();
+      off.width = Math.max(2, Math.ceil(dw));
+      off.height = Math.max(2, Math.ceil(dh));
+      const octx = off.getContext('2d');
+      octx.imageSmoothingEnabled = true;
+      octx.clearRect(0,0,off.width,off.height);
+      octx.save();
+      octx.translate(off.width/2, off.height/2);
+      octx.rotate(rot);
+      octx.drawImage(srcImage, -dw/2, -dh/2, dw, dh);
+      octx.restore();
 
-      // Линии скорости для «Бега»
+      // Тени/подложки для отдельных эффектов (hover)
+      if(eff==='hover'){
+        ctx.save();
+        ctx.globalAlpha = 0.35*(0.7+0.3*Math.sin(t*2*Math.PI));
+        ctx.fillStyle = 'rgba(0,0,0,0.6)';
+        const shw = dw*0.5, shh = dh*0.1;
+        ctx.beginPath();
+        ctx.ellipse(W/2 + dx, H/2 + dy + dh*0.55, shw, shh, 0, 0, Math.PI*2);
+        ctx.fill();
+        ctx.restore();
+      }
+
+      // Отрисуем основные линии скорости для «Бега»
       if(eff==='run'){
         const lines = 6;
         ctx.save();
@@ -553,42 +728,204 @@
         for(let i=0;i<lines;i++){
           const yy = (H*(i+1)/(lines+1)) + Math.sin(t*2*Math.PI + i)*8;
           const len = W*0.18;
-          const off = (t*W*0.3 + i*40) % (W*0.3);
-          ctx.fillRect(W - off - len, yy, len, 2);
+          const offx = (t*W*0.3 + i*40) % (W*0.3);
+          ctx.fillRect(W - offx - len, yy, len, 2);
         }
         ctx.restore();
       }
+
+      // Послеследы для «Рывок»
+      if(eff==='dash'){
+        ctx.save();
+        ctx.globalAlpha = 0.18 + 0.12*k;
+        const trails = 4 + Math.floor(2*k);
+        for(let i=trails;i>=1;i--){
+          const alpha = (0.12 + 0.1*k) * (1 - i/trails);
+          ctx.globalAlpha = alpha;
+          ctx.drawImage(off, (W/2 - off.width/2) + dx - i*off.width*0.08, (H/2 - off.height/2) + dy);
+        }
+        ctx.restore();
+      }
+
+      // Основной спрайт
+      ctx.drawImage(off, (W/2 - off.width/2) + dx, (H/2 - off.height/2) + dy);
+
+      // Эффекты поверх героя
+      const cx = W/2 + dx, cy = H/2 + dy;
 
       // Вспышка для «Выстрела»
       if(eff==='shoot'){
         const n = parseInt(els.shots.value||1,10);
         for(let i=0;i<n;i++){
-          const center = (i+0.5)/n;
-          const w = 0.06;
-          const dt = Math.abs(t-center);
+          const center=(i+0.5)/n, w=0.06, dt=Math.abs(t-center);
           if(dt < w){
-            const local = 1 - dt/w; // 0..1
+            const local = 1 - dt/w;
             const fp = flashPoint || {x:W*0.75, y:H*0.45};
-            const r = Math.max(W,H) * (0.12 + 0.20*local) * (0.5 + k);
-            const g = ctx.createRadialGradient(fp.x, fp.y, 0, fp.x, fp.y, r);
+            const R = Math.max(W,H) * (0.12 + 0.20*local) * (0.5 + k);
+            const g = ctx.createRadialGradient(fp.x, fp.y, 0, fp.x, fp.y, R);
             g.addColorStop(0, 'rgba(255,255,210,'+(0.9*local)+')');
             g.addColorStop(0.35, 'rgba(255,230,120,'+(0.6*local)+')');
             g.addColorStop(1, 'rgba(255,200,0,0)');
             ctx.save();
             ctx.globalCompositeOperation = 'screen';
             ctx.fillStyle = g;
-            ctx.beginPath(); ctx.arc(fp.x, fp.y, r, 0, Math.PI*2); ctx.fill();
+            ctx.beginPath(); ctx.arc(fp.x, fp.y, R, 0, Math.PI*2); ctx.fill();
             ctx.restore();
             break;
           }
         }
       }
 
+      if(eff==='shockwave'){
+        const local = (Math.sin(t*2*Math.PI)*0.5+0.5);
+        drawShockwave(ctx, cx, cy, local, W, H, Math.max(0.2, k));
+      }
+
+      if(eff==='damageFlash'){
+        const flash = Math.max(0, Math.sin(t*2*Math.PI))*0.6*k;
+        ctx.save();
+        ctx.globalCompositeOperation = 'multiply';
+        ctx.fillStyle = 'rgba(255,60,60,'+flash+')';
+        ctx.fillRect(0,0,W,H);
+        ctx.restore();
+      }
+
+      if(eff==='hit'){
+        const pulse = 1 - Math.abs(Math.sin(t*Math.PI*2));
+        if(pulse>0.85){
+          ctx.save();
+          ctx.fillStyle='rgba(255,255,255,'+((pulse-0.85)/0.15*0.5*k)+')';
+          ctx.fillRect(0,0,W,H);
+          ctx.restore();
+        }
+      }
+
+      if(eff==='shield'){
+        ctx.save();
+        ctx.globalCompositeOperation = 'screen';
+        const r = Math.max(dw,dh)*0.62;
+        const g = ctx.createRadialGradient(cx, cy, r*0.75, cx, cy, r);
+        g.addColorStop(0, 'rgba(120,210,255,'+(0.16+0.18*k)+')');
+        g.addColorStop(1, 'rgba(120,210,255,0)');
+        ctx.fillStyle = g;
+        ctx.beginPath(); ctx.arc(cx, cy, r, 0, Math.PI*2); ctx.fill();
+        ctx.lineWidth = 2;
+        ctx.strokeStyle = 'rgba(120,210,255,'+(0.6*(0.5+0.5*Math.sin(t*6*Math.PI))*k)+')';
+        ctx.beginPath(); ctx.arc(cx, cy, r*0.98, 0, Math.PI*2); ctx.stroke();
+        ctx.restore();
+      }
+
+      if(eff==='healRing'){
+        ctx.save();
+        ctx.globalCompositeOperation = 'screen';
+        const y = cy + dh*0.55;
+        const R = Math.max(dw,dh)*0.7;
+        const g = ctx.createRadialGradient(cx, y, 0, cx, y, R);
+        g.addColorStop(0, 'rgba(120,255,170,'+(0.35+0.25*Math.sin(t*2*Math.PI)*k)+')');
+        g.addColorStop(1, 'rgba(120,255,170,0)');
+        ctx.fillStyle = g;
+        ctx.beginPath(); ctx.arc(cx, y, R, 0, Math.PI*2); ctx.fill();
+        ctx.restore();
+      }
+
+      if(eff==='buffAura'){
+        ctx.save();
+        ctx.globalCompositeOperation = 'screen';
+        const g = ctx.createLinearGradient(cx, cy-dh*0.6, cx, cy+dh*0.6);
+        g.addColorStop(0,'rgba(150,210,255,'+(0.08+0.25*k)+')');
+        g.addColorStop(0.5,'rgba(200,120,255,'+(0.12+0.2*k)+')');
+        g.addColorStop(1,'rgba(150,210,255,0)');
+        ctx.fillStyle = g;
+        ctx.fillRect(cx-dw*0.6, cy-dh*0.6, dw*1.2, dh*1.2);
+        ctx.restore();
+      }
+
+      if(eff==='poisonAura'){
+        ctx.save();
+        ctx.globalCompositeOperation = 'screen';
+        for(let i=0;i<18;i++){
+          const a = (i/18 + t*0.2)%1;
+          const px = cx + Math.sin(i*1.7 + t*3)*dw*0.3;
+          const py = cy + (a-0.5)*dh*1.2;
+          const r = 10 + (i%5)*6;
+          const g = ctx.createRadialGradient(px,py,0,px,py,r);
+          g.addColorStop(0,'rgba(120,255,120,'+(0.25+0.25*k)+')');
+          g.addColorStop(1,'rgba(120,255,120,0)');
+          ctx.fillStyle=g;
+          ctx.beginPath(); ctx.arc(px,py,r,0,Math.PI*2); ctx.fill();
+        }
+        ctx.restore();
+      }
+
+      if(eff==='electric'){
+        drawElectric(ctx, W, H, t, k);
+      }
+
+      if(eff==='glowPulse'){
+        drawNeonOutline(ctx, off, (W/2 - off.width/2) + dx, (H/2 - off.height/2) + dy, off.width, off.height,
+          'rgba(94,139,255,'+(0.5+0.4*Math.sin(t*2*Math.PI)*k)+')', 24+18*k);
+      }
+
+      if(eff==='outlineNeon'){
+        ctx.save();
+        ctx.globalCompositeOperation = 'screen';
+        const passes = 4;
+        for(let i=0;i<passes;i++){
+          const ang = i/passes*Math.PI*2;
+          const ox = Math.cos(ang)*2.0;
+          const oy = Math.sin(ang)*2.0;
+          ctx.globalAlpha = 0.35;
+          ctx.filter = 'blur(0.5px)';
+          ctx.drawImage(off, (W/2 - off.width/2) + dx+ox, (H/2 - off.height/2) + dy+oy);
+        }
+        ctx.restore();
+      }
+
+      if(eff==='glitch'){
+        drawGlitch(ctx, off, (W/2 - off.width/2) + dx, (H/2 - off.height/2) + dy, off.width, off.height, t, k);
+      }
+
+      if(eff==='hologram'){
+        drawHologram(ctx, off, (W/2 - off.width/2) + dx, (H/2 - off.height/2) + dy, off.width, off.height, t, k);
+      }
+
+      if(eff==='scanlines'){
+        drawScanlines(ctx, W, H, 0.18*(0.6+0.6*k), 3);
+      }
+
+      if(eff==='pixelate'){
+        drawPixelate(ctx, off, (W/2 - off.width/2) + dx, (H/2 - off.height/2) + dy, off.width, off.height, k);
+      }
+
+      if(eff==='flicker'){
+        const f = 0.85 + 0.15*Math.sin(t*20*Math.PI);
+        ctx.save();
+        ctx.globalCompositeOperation = 'screen';
+        ctx.fillStyle = 'rgba(255,255,255,'+(0.08*k*f)+')';
+        ctx.fillRect(0,0,W,H);
+        ctx.restore();
+      }
+
+      if(eff==='warp'){
+        // Искажение вертикальными полосами
+        const stripe = Math.max(4, Math.floor(off.width/24));
+        for(let x=0; x<off.width; x+=stripe){
+          const band = stripe;
+          const offset = Math.sin((x/off.width)*Math.PI*4 + t*6)*8*k;
+          ctx.drawImage(off, x, 0, band, off.height, (W/2 - off.width/2) + dx + x + offset, (H/2 - off.height/2) + dy, band, off.height);
+        }
+      }
+
+      if(eff==='rain'){ drawRain(ctx, W, H, t, k); }
+      if(eff==='snow'){ drawSnow(ctx, W, H, t, k); }
+      if(eff==='smoke'){ drawSmoke(ctx, W, H, t, k); }
+      if(eff==='fire'){ drawFire(ctx, W, H, t, k); }
+
       // Хромакей
       if(els.enableChroma.checked){
         applyChromaOnCanvas(ctx, W, H, hexToRgb(els.chromaColor.value), parseInt(els.tolerance.value,10), parseInt(els.softness.value,10));
         if(els.transparentBg.checked){
-          // Обеспечим цвет фона магентой под прозрачными пикселями (для индекса прозрачности GIF)
+          // Подложим магенту туда, где альфа 0 (для индекса прозрачности GIF)
           const img = ctx.getImageData(0,0,W,H);
           const d = img.data;
           for(let i=0;i<d.length;i+=4){
@@ -598,7 +935,7 @@
         }
       }
 
-      // Крестообразный маркер точки вспышки (только предпросмотр)
+      // Маркер точки вспышки (предпросмотр)
       if(isPreview && els.effect.value==='shoot' && flashPoint){
         ctx.save();
         ctx.strokeStyle = 'rgba(46,242,255,0.9)';
@@ -642,11 +979,15 @@
     // --------- GIF generation ---------
     els.btnGenerate.addEventListener('click', generateGIF);
     els.btnCancel.addEventListener('click', ()=>{ cancelFlag = true; });
+    els.btnDownload.addEventListener('click', ()=>{
+      if(lastBlob){ saveBlob(lastBlob, `hero-${els.effect.value}-${Date.now()}.gif`); }
+    });
 
     async function generateGIF(){
       if(!srcLoaded){ setStatus('Сначала загрузите изображение', 'err'); return; }
       cancelFlag = false;
       els.btnCancel.disabled = false;
+      els.btnDownload.disabled = true;
       setStatus('Генерация…', '');
 
       const W = parseInt(els.outW.value,10);
@@ -656,82 +997,44 @@
       const dur = parseFloat(els.duration.value||2);
       const fps = clamp(parseInt(els.fps.value||16,10),1,60);
       const totalFrames = Math.max(1, Math.round(dur * fps));
-      const targetMB = document.querySelector('input[name="target"]:checked').value;
-      const targetBytes = targetMB==='none' ? Infinity : parseInt(targetMB,10)*1024*1024;
-      const auto = els.autoCompress.checked;
 
-      let qualityStep = 10; // чем меньше, тем лучше качество и больше размер
-      let scaleMul = 1.0;
-      let dither = false; // можно включить FloydSteinberg при ужимании
-      let blob = null;
+      const gif = new GIF({
+        workers: 2,
+        quality: 10, // 1..30 (меньше — лучше качество)
+        width: W,
+        height: H,
+        repeat: els.loop.checked ? 0 : -1,
+        workerScript: 'https://cdnjs.cloudflare.com/ajax/libs/gif.js/0.2.0/gif.worker.js',
+        transparent: els.transparentBg.checked ? (MAGENTA.r<<16 | MAGENTA.g<<8 | MAGENTA.b) : null,
+      });
 
-      const maxIters = auto && isFinite(targetBytes) ? 6 : 1;
+      const off = document.createElement('canvas');
+      off.width = W; off.height = H;
+      const octx = off.getContext('2d');
 
-      for(let iter=0; iter<maxIters; iter++){
+      for(let f=0; f<totalFrames; f++){
         if(cancelFlag){ setStatus('Отменено', 'err'); els.btnCancel.disabled=true; return; }
-
-        const gw = Math.max(16, Math.round(W*scaleMul));
-        const gh = Math.max(16, Math.round(H*scaleMul));
-
-        const gif = new GIF({
-          workers: 2,
-          quality: qualityStep,
-          width: gw,
-          height: gh,
-          repeat: els.loop.checked ? 0 : -1, // 0 = бесконечно, -1 = без повтора
-          workerScript: 'https://cdnjs.cloudflare.com/ajax/libs/gif.js/0.2.0/gif.worker.js',
-          transparent: els.transparentBg.checked ? (MAGENTA.r<<16 | MAGENTA.g<<8 | MAGENTA.b) : null,
-          dither: dither
-        });
-
-        const off = document.createElement('canvas');
-        off.width = gw; off.height = gh;
-        const octx = off.getContext('2d');
-
-        for(let f=0; f<totalFrames; f++){
-          if(cancelFlag){ break; }
-          const t = totalFrames<=1 ? 0 : f/(totalFrames-1);
-          drawHeroFrame(t, octx, gw, gh, false);
-          gif.addFrame(off, {delay: Math.round(1000/fps), copy:true, dispose: 2});
-          setStatus(`Генерация… кадр ${f+1}/${totalFrames} | попытка ${iter+1}${maxIters>1?'/'+maxIters:''}`);
-          await new Promise(r=>setTimeout(r,0)); // дать дыхание UI
-        }
-
-        if(cancelFlag){ setStatus('Отменено', 'err'); els.btnCancel.disabled=true; return; }
-
-        const blobPromise = new Promise((resolve)=> {
-          gif.on('finished', resolve);
-          gif.render();
-        });
-
-        const resultBlob = await blobPromise;
-        blob = resultBlob;
-        setSizeInfo(blob);
-
-        if(blob.size <= targetBytes){
-          setStatus('Готово ✓ Файл скачан', 'ok');
-          break;
-        }
-
-        if(!auto || !isFinite(targetBytes)){
-          setStatus('Готово (без автосжатия). Файл скачан', 'ok');
-          break;
-        }
-
-        // Ужимаем сильнее: уменьшаем масштаб, повышаем qualityStep (хуже качество), включаем дизеринг
-        qualityStep = Math.min(qualityStep+6, 30);
-        scaleMul = Math.max(0.35, scaleMul*0.85);
-        dither = qualityStep >= 22 ? 'FloydSteinberg' : dither;
-        setStatus(`Слишком большой файл (${humanSize(blob.size)}). Пробуем сильнее сжать…`, 'warn');
+        const t = totalFrames<=1 ? 0 : f/(totalFrames-1);
+        drawHeroFrame(t, octx, W, H, false);
+        gif.addFrame(off, {delay: Math.round(1000/fps), copy:true, dispose: 2});
+        setStatus(`Генерация… кадр ${f+1}/${totalFrames}`);
+        await new Promise(r=>setTimeout(r,0));
       }
 
+      const blobPromise = new Promise((resolve)=> {
+        gif.on('finished', resolve);
+        gif.render();
+      });
+
+      const resultBlob = await blobPromise;
+      lastBlob = resultBlob;
+      els.btnDownload.disabled = false;
       els.btnCancel.disabled = true;
 
-      if(blob){
-        const eff = els.effect.value;
-        const name = `hero-${eff}-${Date.now()}.gif`;
-        autoDownload(blob, name);
-      }
+      // Автоскачивание + кнопка скачивания
+      const name = `hero-${els.effect.value}-${Date.now()}.gif`;
+      saveBlob(lastBlob, name);
+      setStatus('Готово ✓ Файл скачан. Можно скачать ещё раз кнопкой «Скачать GIF».', 'ok');
     }
 
     // Обновление предпросмотра при смене параметров
