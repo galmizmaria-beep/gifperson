@@ -3,281 +3,367 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Рабочий Магический GIF Конструктор</title>
-    <!-- Подключаем библиотеку для создания GIF прямо в браузере -->
+    <title>Продвинутый GIF Конструктор</title>
+    <!-- Основная библиотека -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gif.js/0.2.0/gif.js"></script>
     <style>
-        body { margin: 0; padding: 20px; font-family: 'Comic Sans MS', sans-serif; background: radial-gradient(circle at center, #0a2e1f 0%, #020b08 100%); color: white; min-height: 100vh; display: flex; flex-direction: column; align-items: center; }
-        .wood-sign { background: linear-gradient(to bottom, #6b4423, #3d2314); padding: 15px 40px; border-radius: 10px; border: 3px solid #2a160b; box-shadow: 0 5px 15px rgba(0,0,0,0.8); text-align: center; margin-bottom: 30px; }
-        .wood-sign h1 { margin: 0; color: #d4e86a; font-size: 36px; text-shadow: 2px 2px 0px #1a3300; }
-        .grid-container { display: grid; grid-template-columns: 300px 1fr 300px; gap: 20px; width: 100%; max-width: 1200px; }
-        .panel { background: rgba(10, 30, 25, 0.85); border-radius: 20px; padding: 20px; border: 2px solid rgba(255, 255, 255, 0.1); box-shadow: 0 10px 20px rgba(0,0,0,0.5); }
-        .panel.green { border-color: #7fff00; } .panel.blue { border-color: #00bfff; } .panel.yellow { border-color: #ffd700; } .panel.purple { border-color: #da70d6; }
-        .panel-title { color: #ffd700; font-size: 20px; margin-top: 0; text-align: center; border-bottom: 1px dashed rgba(255,255,255,0.3); padding-bottom: 10px; }
-        input, select, button { width: 100%; padding: 10px; margin-top: 10px; border-radius: 8px; border: 1px solid #444; background: rgba(0,0,0,0.5); color: white; box-sizing: border-box; }
-        label { font-size: 14px; color: #a0d8c0; display: block; margin-top: 15px; }
-        .preview-area { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 400px; border: 2px dashed rgba(255,255,255,0.2); position: relative; background: repeating-conic-gradient(rgba(0,0,0,0.1) 0% 25%, transparent 0% 50%) 50% / 20px 20px; overflow: hidden;}
-        canvas { max-width: 100%; max-height: 500px; border-radius: 10px; }
-        .btn-action { background: linear-gradient(135deg, #2e8b57, #006400); color: white; font-weight: bold; cursor: pointer; transition: 0.3s; }
-        .btn-action:hover { background: #3cb371; transform: scale(1.05); }
-        .btn-download { background: linear-gradient(135deg, #ffd700, #ff8c00); color: #333; font-size: 20px; padding: 15px; animation: pulse 2s infinite; }
-        @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(255, 215, 0, 0.7); } 70% { box-shadow: 0 0 0 15px rgba(0,0,0,0); } 100% { box-shadow: 0 0 0 0 rgba(0,0,0,0); } }
-        #loading { display: none; color: #ffd700; font-weight: bold; margin-top: 10px; text-align: center; }
+        body { margin: 0; padding: 20px; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #05110d; color: white; display: flex; flex-direction: column; align-items: center; }
+        .header { background: linear-gradient(to right, #4a2c16, #2d180b); padding: 15px 40px; border-radius: 10px; border: 2px solid #8b5a2b; box-shadow: 0 4px 15px rgba(0,0,0,0.8); margin-bottom: 20px; text-align: center; }
+        .header h1 { margin: 0; color: #a4d85a; text-transform: uppercase; font-size: 28px; }
+        
+        .grid { display: grid; grid-template-columns: 300px 1fr 300px; gap: 20px; width: 100%; max-width: 1300px; }
+        .panel { background: #112a20; border-radius: 15px; padding: 20px; border: 1px solid #2a4c3f; box-shadow: 0 8px 20px rgba(0,0,0,0.6); }
+        .panel h2 { color: #f5cf5b; font-size: 18px; margin-top: 0; border-bottom: 1px solid #2a4c3f; padding-bottom: 10px; }
+        
+        input, select, button { width: 100%; padding: 12px; margin-top: 10px; border-radius: 6px; border: 1px solid #3c6e5a; background: #0a1c15; color: white; box-sizing: border-box; cursor: pointer; }
+        label { font-size: 13px; color: #84bca1; display: block; margin-top: 15px; }
+        
+        .btn { background: #238b58; font-weight: bold; transition: 0.2s; }
+        .btn:hover { background: #2db372; transform: translateY(-2px); }
+        .btn-download { background: #d99a22; color: #111; font-size: 18px; animation: glow 2s infinite; }
+        @keyframes glow { 0% { box-shadow: 0 0 5px #d99a22; } 50% { box-shadow: 0 0 20px #d99a22; } 100% { box-shadow: 0 0 5px #d99a22; } }
+        
+        .preview { text-align: center; background: repeating-conic-gradient(#1a1a1a 0% 25%, #222 0% 50%) 50% / 20px 20px; border-radius: 10px; overflow: hidden; position: relative; min-height: 400px; display: flex; align-items: center; justify-content: center; border: 2px dashed #444; cursor: crosshair;}
+        canvas { max-width: 100%; max-height: 500px; }
+        
+        .progress-box { display: none; background: #000; padding: 15px; border-radius: 10px; margin-top: 15px; border: 1px solid #ffd700; text-align: center;}
+        #progressBar { width: 0%; height: 10px; background: #ffd700; border-radius: 5px; margin-top: 10px; transition: width 0.1s; }
+        
+        .slider-container { display: flex; align-items: center; gap: 10px; margin-top: 10px; }
+        .slider-container input { margin: 0; flex-grow: 1; cursor: ew-resize; }
+        
+        .instruction { font-size: 12px; color: #ffaa00; margin-top: 5px; line-height: 1.4; }
     </style>
 </head>
 <body>
 
-    <div class="wood-sign">
-        <h1>✨ Рабочий GIF Конструктор ✨</h1>
+    <div class="header">
+        <h1>✨ PRO-Конструктор GIF ✨</h1>
     </div>
 
-    <div class="grid-container">
-        <div class="column">
-            <div class="panel green">
-                <h2 class="panel-title">1. Картинка</h2>
-                <label>Загрузить файл:</label>
-                <input type="file" id="fileInput" accept="image/*">
+    <div class="grid">
+        <!-- ЛЕВАЯ ПАНЕЛЬ -->
+        <div class="panel">
+            <h2>1. Изображение и Фон</h2>
+            <label>Загрузить файл:</label>
+            <input type="file" id="fileInput" accept="image/*">
+            
+            <label>Удаление фона (Волшебная палочка):</label>
+            <div class="instruction">Кликните курсором прямо по фону на картинке в центре, чтобы удалить его.</div>
+            
+            <div class="slider-container">
+                <span style="font-size: 12px; color: #aaa;">Сила:</span>
+                <input type="range" id="tolerance" min="0" max="150" value="40">
+                <span id="tolValue" style="font-size: 12px;">40</span>
             </div>
-
-            <div class="panel blue" style="margin-top: 20px;">
-                <h2 class="panel-title">2. Фон</h2>
-                <button class="btn-action" onclick="removeWhiteBackground()">Удалить светлый фон</button>
-                <button class="btn-action" onclick="resetImage()">Вернуть оригинал</button>
-            </div>
+            <button class="btn" onclick="resetImage()" style="background: #8b3a3a; border-color: #5a2626;">Сбросить изменения</button>
         </div>
 
-        <div class="column">
-            <div class="panel yellow preview-area">
-                <h2 class="panel-title" style="position: absolute; top: 10px; z-index: 10; background: rgba(0,0,0,0.7); padding: 5px 15px; border-radius: 10px;">Волшебное зеркало</h2>
-                <!-- Мы используем Canvas для реального рендеринга -->
+        <!-- ЦЕНТР (КАНВАС) -->
+        <div class="panel" style="padding: 10px;">
+            <h2 style="padding-left: 10px;">Предпросмотр</h2>
+            <div class="preview" id="previewArea">
                 <canvas id="previewCanvas"></canvas>
             </div>
         </div>
 
-        <div class="column">
-            <div class="panel purple">
-                <h2 class="panel-title">3. Анимация</h2>
-                <label>Выберите эффект движения:</label>
-                <select id="effectSelect" onchange="startPreviewAnimation()">
-                    <option value="none">Статично (Без магии)</option>
-                    <option value="breathe">Дыхание (Увеличение/Сжатие)</option>
-                    <option value="float">Парение (Вверх-вниз)</option>
-                    <option value="wobble">Качание (Влево-вправо)</option>
-                </select>
-            </div>
+        <!-- ПРАВАЯ ПАНЕЛЬ -->
+        <div class="panel">
+            <h2>2. Эффекты и Магия</h2>
+            <label>Интересная анимация:</label>
+            <select id="effectSelect" onchange="startAnimation()">
+                <option value="none">Статично</option>
+                <option value="aura">✨ Магическая аура (Свечение)</option>
+                <option value="ripple">🌊 Водная рябь (Искажение)</option>
+                <option value="glitch">⚡ Кибер-Глитч (Помехи)</option>
+                <option value="disco">🌈 Взрыв цвета (Hue цикл)</option>
+                <option value="pulse3d">🫀 Пульсация 3D (Приближение)</option>
+                <option value="float">🎈 Парение (Лёгкое покачивание)</option>
+            </select>
 
-            <div class="panel green" style="margin-top: 20px;">
-                <h2 class="panel-title">4. Генерация</h2>
-                <label>Разрешение (для браузера):</label>
-                <select id="qualitySelect">
-                    <option value="300">Стандарт (Быстро)</option>
-                    <option value="600">Высокое (Медленнее)</option>
-                </select>
-                <button class="btn-action btn-download" onclick="generateAndDownloadGIF()">💾 СОЗДАТЬ GIF</button>
-                <div id="loading">Колдуем... Пожалуйста, подождите ⏳</div>
+            <h2 style="margin-top: 30px;">3. Сохранение (Сжатие)</h2>
+            <label>Целевой размер (Оптимизация):</label>
+            <select id="sizeSelect">
+                <option value="5">Лёгкая GIF (До ~5 МБ) - Меньше кадров</option>
+                <option value="10">Качественная GIF (До ~10 МБ) - Больше кадров</option>
+            </select>
+
+            <button class="btn btn-download" onclick="generateGIF()" style="margin-top: 25px;">💾 СОЗДАТЬ GIF</button>
+            
+            <div class="progress-box" id="progressBox">
+                <div id="progressText">Колдуем кадры... 0%</div>
+                <div id="progressBar"></div>
             </div>
         </div>
     </div>
 
     <script>
         const canvas = document.getElementById('previewCanvas');
-        const ctx = canvas.getContext('2d');
-        const fileInput = document.getElementById('fileInput');
-        const effectSelect = document.getElementById('effectSelect');
-        const loadingText = document.getElementById('loading');
-        
-        let originalImage = new Image();
-        let processedImage = new Image();
-        let animationFrameId;
-        let isImageLoaded = false;
+        const ctx = canvas.getContext('2d', { willReadFrequently: true });
+        let originalImg = new Image();
+        let currentImgData = null; // Для хранения картинки без фона
+        let animFrame;
+        let timeOffset = 0;
+
+        // Настройки
+        document.getElementById('tolerance').addEventListener('input', (e) => {
+            document.getElementById('tolValue').innerText = e.target.value;
+        });
 
         // 1. ЗАГРУЗКА КАРТИНКИ
-        fileInput.addEventListener('change', function(e) {
+        document.getElementById('fileInput').addEventListener('change', function(e) {
             const file = e.target.files[0];
             if (file) {
                 const reader = new FileReader();
                 reader.onload = function(event) {
-                    originalImage.src = event.target.result;
-                    originalImage.onload = () => {
-                        isImageLoaded = true;
-                        processedImage.src = originalImage.src; // Копируем для обработки
-                        initCanvas();
+                    originalImg.src = event.target.result;
+                    originalImg.onload = () => {
+                        const maxSize = 600;
+                        let w = originalImg.width, h = originalImg.height;
+                        if (w > maxSize || h > maxSize) {
+                            const ratio = Math.min(maxSize / w, maxSize / h);
+                            w *= ratio; h *= ratio;
+                        }
+                        canvas.width = w; canvas.height = h;
+                        resetImage();
                     }
                 }
                 reader.readAsDataURL(file);
             }
         });
 
-        function initCanvas() {
-            // Устанавливаем размер холста
-            const maxSize = 500;
-            const ratio = originalImage.width / originalImage.height;
-            if(ratio > 1) {
-                canvas.width = maxSize;
-                canvas.height = maxSize / ratio;
-            } else {
-                canvas.height = maxSize;
-                canvas.width = maxSize * ratio;
-            }
-            startPreviewAnimation();
+        function resetImage() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.drawImage(originalImg, 0, 0, canvas.width, canvas.height);
+            currentImgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+            startAnimation();
         }
 
-        // 2. УДАЛЕНИЕ ФОНА (Удаляем белые и очень светлые пиксели)
-        function removeWhiteBackground() {
-            if(!isImageLoaded) return;
+        // 2. УДАЛЕНИЕ ФОНА (Волшебная палочка - Алгоритм Flood Fill)
+        canvas.addEventListener('mousedown', function(e) {
+            if (!currentImgData) return;
+            const rect = canvas.getBoundingClientRect();
+            // Вычисляем точные координаты клика на холсте
+            const scaleX = canvas.width / rect.width;
+            const scaleY = canvas.height / rect.height;
+            const x = Math.floor((e.clientX - rect.left) * scaleX);
+            const y = Math.floor((e.clientY - rect.top) * scaleY);
             
-            // Рисуем оригинал во временный канвас
-            const tempCanvas = document.createElement('canvas');
-            tempCanvas.width = originalImage.width;
-            tempCanvas.height = originalImage.height;
-            const tCtx = tempCanvas.getContext('2d');
-            tCtx.drawImage(originalImage, 0, 0);
+            floodFill(x, y, parseInt(document.getElementById('tolerance').value));
+        });
+
+        function floodFill(startX, startY, tolerance) {
+            const w = currentImgData.width;
+            const h = currentImgData.height;
+            const data = currentImgData.data;
             
-            const imageData = tCtx.getImageData(0, 0, tempCanvas.width, tempCanvas.height);
-            const data = imageData.data;
+            const startPos = (startY * w + startX) * 4;
+            const r0 = data[startPos], g0 = data[startPos+1], b0 = data[startPos+2], a0 = data[startPos+3];
             
-            // Проходим по всем пикселям. Если пиксель светлый (r>200, g>200, b>200), делаем его прозрачным
-            for(let i = 0; i < data.length; i += 4) {
-                if(data[i] > 220 && data[i+1] > 220 && data[i+2] > 220) {
-                    data[i+3] = 0; // Alpha канал (прозрачность)
+            if (a0 === 0) return; // Уже прозрачный
+
+            const stack = [[startX, startY]];
+            const visited = new Uint8Array(w * h);
+            visited[startY * w + startX] = 1;
+
+            while (stack.length > 0) {
+                let [x, y] = stack.pop();
+                let pos = (y * w + x) * 4;
+                
+                // Делаем прозрачным
+                data[pos+3] = 0;
+
+                // Проверяем соседей (Вверх, Вниз, Влево, Вправо)
+                const neighbors = [[x, y-1], [x, y+1], [x-1, y], [x+1, y]];
+                for (let [nx, ny] of neighbors) {
+                    if (nx >= 0 && nx < w && ny >= 0 && ny < h) {
+                        let nIdx = ny * w + nx;
+                        if (!visited[nIdx]) {
+                            let nPos = nIdx * 4;
+                            let r = data[nPos], g = data[nPos+1], b = data[nPos+2], a = data[nPos+3];
+                            // Проверка на толерантность (расстояние цвета)
+                            if (a > 0 && Math.abs(r - r0) <= tolerance && Math.abs(g - g0) <= tolerance && Math.abs(b - b0) <= tolerance) {
+                                visited[nIdx] = 1;
+                                stack.push([nx, ny]);
+                            }
+                        }
+                    }
                 }
             }
-            
-            tCtx.putImageData(imageData, 0, 0);
-            processedImage.src = tempCanvas.toDataURL();
-            processedImage.onload = () => startPreviewAnimation();
+            startAnimation(); // Перерисовываем
         }
 
-        function resetImage() {
-            if(isImageLoaded) {
-                processedImage.src = originalImage.src;
-                processedImage.onload = () => startPreviewAnimation();
-            }
-        }
-
-        // 3. АНИМАЦИЯ (Предпросмотр в браузере)
-        function drawFrame(time = 0) {
-            if(!isImageLoaded) return;
+        // 3. АНИМАЦИЯ ЭФФЕКТОВ
+        function drawFrame(time) {
+            if (!currentImgData) return;
             
+            // Временный холст для чистого кадра без фона
+            const tempC = document.createElement('canvas');
+            tempC.width = canvas.width; tempC.height = canvas.height;
+            const tCtx = tempC.getContext('2d');
+            tCtx.putImageData(currentImgData, 0, 0);
+
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             ctx.save();
             
-            const effect = effectSelect.value;
+            const effect = document.getElementById('effectSelect').value;
             const cx = canvas.width / 2;
             const cy = canvas.height / 2;
             
-            // Центрируем для трансформаций
+            // Центрируем
             ctx.translate(cx, cy);
-            
-            // Математика анимаций (зависит от времени)
-            if (effect === 'breathe') {
-                const scale = 1 + Math.sin(time / 200) * 0.05; // пульсация 5%
+
+            if (effect === 'aura') {
+                ctx.shadowBlur = 30;
+                ctx.shadowColor = `hsl(${(time * 100) % 360}, 100%, 50%)`; // Переливающийся цвет
+                const scale = 1 + Math.sin(time * Math.PI) * 0.02;
                 ctx.scale(scale, scale);
-            } else if (effect === 'float') {
-                const yOffset = Math.sin(time / 300) * 15; // полет вверх-вниз на 15px
-                ctx.translate(0, yOffset);
-            } else if (effect === 'wobble') {
-                const angle = Math.sin(time / 200) * 0.1; // наклон
-                ctx.rotate(angle);
+                ctx.drawImage(tempC, -cx, -cy);
+            } 
+            else if (effect === 'float') {
+                const yOff = Math.sin(time * Math.PI * 2) * 15;
+                const rot = Math.sin(time * Math.PI) * 0.05;
+                ctx.translate(0, yOff);
+                ctx.rotate(rot);
+                ctx.drawImage(tempC, -cx, -cy);
+            }
+            else if (effect === 'pulse3d') {
+                const scale = 1 + Math.abs(Math.sin(time * Math.PI * 2)) * 0.15;
+                ctx.scale(scale, scale);
+                ctx.drawImage(tempC, -cx, -cy);
+            }
+            else if (effect === 'disco') {
+                ctx.filter = `hue-rotate(${time * 360}deg) saturate(2)`;
+                ctx.drawImage(tempC, -cx, -cy);
+            }
+            else if (effect === 'glitch') {
+                ctx.drawImage(tempC, -cx, -cy);
+                if (Math.random() > 0.8) {
+                    const shift = (Math.random() - 0.5) * 20;
+                    ctx.globalCompositeOperation = 'screen';
+                    ctx.fillStyle = 'rgba(255,0,0,0.5)';
+                    ctx.fillRect(-cx + shift, -cy, canvas.width, canvas.height);
+                    ctx.drawImage(tempC, -cx - shift, -cy);
+                }
+            }
+            else if (effect === 'ripple') {
+                // Сложный пиксельный шейдер (имитация ряби)
+                ctx.drawImage(tempC, -cx, -cy);
+                const imgData = ctx.getImageData(0,0, canvas.width, canvas.height);
+                const data = imgData.data;
+                const newImgData = ctx.createImageData(canvas.width, canvas.height);
+                const newData = newImgData.data;
+                
+                for(let y=0; y<canvas.height; y++){
+                    for(let x=0; x<canvas.width; x++){
+                        const offset = Math.sin(y/10 + time*10) * 5;
+                        const srcX = Math.floor(x + offset);
+                        if(srcX >= 0 && srcX < canvas.width) {
+                            const i = (y * canvas.width + x) * 4;
+                            const si = (y * canvas.width + srcX) * 4;
+                            newData[i] = data[si]; newData[i+1] = data[si+1]; newData[i+2] = data[si+2]; newData[i+3] = data[si+3];
+                        }
+                    }
+                }
+                ctx.putImageData(newImgData, 0, 0);
+            }
+            else {
+                ctx.drawImage(tempC, -cx, -cy);
             }
 
-            // Рисуем картинку
-            ctx.drawImage(processedImage, -canvas.width/2, -canvas.height/2, canvas.width, canvas.height);
             ctx.restore();
         }
 
-        function loop(timestamp) {
-            drawFrame(timestamp);
-            animationFrameId = requestAnimationFrame(loop);
+        function loop() {
+            timeOffset += 0.02; // Скорость анимации
+            if (timeOffset >= 1) timeOffset = 0; // Зацикливание
+            drawFrame(timeOffset);
+            animFrame = requestAnimationFrame(loop);
         }
 
-        function startPreviewAnimation() {
-            if(animationFrameId) cancelAnimationFrame(animationFrameId);
-            requestAnimationFrame(loop);
+        function startAnimation() {
+            if (animFrame) cancelAnimationFrame(animFrame);
+            timeOffset = 0;
+            loop();
         }
 
-        // 4. ГЕНЕРАЦИЯ И СКАЧИВАНИЕ РЕАЛЬНОГО GIF
-        function generateAndDownloadGIF() {
-            if(!isImageLoaded) {
-                alert('Сначала загрузите картинку!');
-                return;
-            }
+        // 4. ГЕНЕРАЦИЯ И СКАЧИВАНИЕ GIF (Обход ошибки CORS)
+        // Чтобы обойти ошибку gif.worker.js, мы создаем воркер прямо из текста кода
+        const gifWorkerCode = `
+            // Внутренний код библиотеки gif.js worker (упрощенная загрузка)
+            importScripts('https://cdnjs.cloudflare.com/ajax/libs/gif.js/0.2.0/gif.worker.js');
+        `;
+        const workerBlob = new Blob([gifWorkerCode], { type: 'application/javascript' });
+        const workerUrl = URL.createObjectURL(workerBlob);
 
-            loadingText.style.display = 'block';
-            if(animationFrameId) cancelAnimationFrame(animationFrameId);
-
-            const size = parseInt(document.getElementById('qualitySelect').value);
-            const effect = effectSelect.value;
+        function generateGIF() {
+            if (!currentImgData) return alert("Загрузите картинку!");
             
-            // Создаем невидимый канвас нужного размера для рендера
-            const renderCanvas = document.createElement('canvas');
-            renderCanvas.width = size;
-            renderCanvas.height = size * (canvas.height / canvas.width);
-            const rCtx = renderCanvas.getContext('2d');
+            if (animFrame) cancelAnimationFrame(animFrame);
 
-            // Настройка кодировщика GIF (используем библиотеку gif.js)
+            const sizeTarget = document.getElementById('sizeSelect').value;
+            // Логика размера: 5МБ = меньше кадров (15), 10МБ = больше кадров (30)
+            const frames = sizeTarget === "5" ? 15 : 30; 
+            const delay = sizeTarget === "5" ? 66 : 33; // ~15fps vs 30fps
+
+            const progressBox = document.getElementById('progressBox');
+            const progressText = document.getElementById('progressText');
+            const progressBar = document.getElementById('progressBar');
+            progressBox.style.display = 'block';
+            
+            // Настройка GIF с прозрачностью! transparent: 0x000000 означает черный цвет как прозрачный, 
+            // поэтому мы используем rgba(0,0,0,0) на холсте
             const gif = new GIF({
                 workers: 2,
                 quality: 10,
-                width: renderCanvas.width,
-                height: renderCanvas.height,
-                transparent: 0x000000 // поддержка прозрачности
+                width: canvas.width,
+                height: canvas.height,
+                transparent: 0x00000000, // RGBA полностью прозрачный
+                workerScript: workerUrl // ИСПОЛЬЗУЕМ BLOB URL ДЛЯ РЕШЕНИЯ ПРОБЛЕМЫ
             });
 
-            // Настройки длины анимации
-            const totalFrames = 20; // 20 кадров для цикла
-            const delay = 50; // задержка 50мс (20 FPS)
-
-            // Генерируем кадры математически
-            for(let i = 0; i < totalFrames; i++) {
-                rCtx.clearRect(0, 0, renderCanvas.width, renderCanvas.height);
-                rCtx.save();
+            // Рендер кадров
+            for (let i = 0; i < frames; i++) {
+                // Высчитываем фазу от 0 до 1 для идеального цикла
+                const timePhase = i / frames; 
+                drawFrame(timePhase);
                 
-                const cx = renderCanvas.width / 2;
-                const cy = renderCanvas.height / 2;
-                rCtx.translate(cx, cy);
+                // Копируем во временный холст чтобы передать в gif.js
+                const tempCanvas = document.createElement('canvas');
+                tempCanvas.width = canvas.width; tempCanvas.height = canvas.height;
+                const tcCtx = tempCanvas.getContext('2d');
+                // Важно: заливаем полностью прозрачным цветом перед отрисовкой
+                tcCtx.clearRect(0, 0, canvas.width, canvas.height); 
+                tcCtx.drawImage(canvas, 0, 0);
                 
-                // Эмуляция времени для ровного цикла (от 0 до 2*PI)
-                const timeAngle = (i / totalFrames) * Math.PI * 2;
-
-                if (effect === 'breathe') {
-                    const scale = 1 + Math.sin(timeAngle) * 0.05;
-                    rCtx.scale(scale, scale);
-                } else if (effect === 'float') {
-                    const yOffset = Math.sin(timeAngle) * (renderCanvas.height * 0.05);
-                    rCtx.translate(0, yOffset);
-                } else if (effect === 'wobble') {
-                    const angle = Math.sin(timeAngle) * 0.1;
-                    rCtx.rotate(angle);
-                }
-
-                rCtx.drawImage(processedImage, -renderCanvas.width/2, -renderCanvas.height/2, renderCanvas.width, renderCanvas.height);
-                rCtx.restore();
-                
-                // Добавляем кадр в GIF
-                gif.addFrame(rCtx, {copy: true, delay: delay});
+                gif.addFrame(tempCanvas, {delay: delay, copy: true});
             }
 
-            // Когда GIF готов
+            gif.on('progress', function(p) {
+                const percent = Math.round(p * 100);
+                progressText.innerText = `Упаковка GIF... ${percent}%`;
+                progressBar.style.width = percent + '%';
+            });
+
             gif.on('finished', function(blob) {
-                loadingText.style.display = 'none';
+                progressText.innerText = "Готово! Скачивание...";
+                setTimeout(() => { progressBox.style.display = 'none'; }, 2000);
                 
-                // Скачиваем
+                const url = URL.createObjectURL(blob);
                 const a = document.createElement('a');
-                a.href = URL.createObjectURL(blob);
-                a.download = 'magic_animation.gif';
+                a.href = url;
+                a.download = `magic_effect_${sizeTarget}MB.gif`;
                 document.body.appendChild(a);
                 a.click();
                 document.body.removeChild(a);
+                URL.revokeObjectURL(url);
                 
-                // Возвращаем предпросмотр
-                startPreviewAnimation();
+                startAnimation(); // Возвращаем предпросмотр
             });
 
-            // Запускаем сборку
+            progressText.innerText = "Генерация кадров...";
             gif.render();
         }
-
     </script>
 </body>
 </html>
